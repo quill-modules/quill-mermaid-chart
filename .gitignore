@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+**/output
+/docs/**/*
+
+!/docs/index.js
+!/docs/index.html
+
+
+.env.*
+.eslintcache
