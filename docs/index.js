@@ -1,8 +1,6 @@
 const Quill = window.Quill;
 const mermaid = window.mermaid;
 
-mermaid.initialize({ startOnLoad: false });
-
 Quill.register({
   'modules/mermaid': bundle.QuillMermaid,
 }, true);
@@ -64,8 +62,7 @@ flowchart LR
   },
   {
     insert: {
-      'mermaid-chart': `
-sequenceDiagram
+      'mermaid-chart': `sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
     Alice-)John: See you later!`,
