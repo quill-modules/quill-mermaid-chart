@@ -60,7 +60,7 @@ const buildTs = async (isDev: boolean = false) => {
   });
 };
 const buildTheme = async (isDev: boolean = false) => {
-  const bunlde = await src(await glob('src/**/*.scss'))
+  const bunlde = await src(await glob('src/style/index.scss', { absolute: true }))
     .pipe(sassPlugin().on('error', sassPlugin.logError))
     .pipe(postcss([autoprefixer()]))
     .pipe(
