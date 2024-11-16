@@ -1,0 +1,13 @@
+$namespace: ql;
+
+@mixin setCssVar($name, $value, $np: $namespace) {
+  @if $np == '' {
+    --#{$name}: #{$value};
+  } @else {
+    --#{$np}-#{$name}: #{$value};
+  }
+}
+
+@function getCssVar($name, $np: $namespace) {
+  @return if($np == '', var(--#{$name}), var(--#{$np}-#{$name}));
+}
