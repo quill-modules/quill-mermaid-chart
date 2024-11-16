@@ -26,6 +26,7 @@ export class QuillMermaid {
     this.quill.root.addEventListener(
       'click',
       (evt: MouseEvent) => {
+        if (!this.quill.scroll.isEnabled()) return;
         const path = evt.composedPath() as HTMLElement[];
         if (!path || path.length <= 0) return;
 
@@ -47,8 +48,8 @@ export class QuillMermaid {
       false,
     );
     this.quill.on(Quill.events.TEXT_CHANGE, () => {
-      this.destroyMermaidSelector()
-    })
+      this.destroyMermaidSelector();
+    });
   }
 
   updateMermaidSelector(mermaidBlot: MermaidChartFormat) {
