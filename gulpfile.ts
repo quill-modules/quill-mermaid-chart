@@ -12,6 +12,7 @@ import rename from 'gulp-rename';
 import gulpSass from 'gulp-sass';
 import { rollup } from 'rollup';
 import { dts } from 'rollup-plugin-dts';
+import svg from 'rollup-plugin-svg-import';
 import sass from 'sass';
 
 const sassPlugin = gulpSass(sass);
@@ -34,7 +35,12 @@ const buildDts = async () => {
   });
 };
 const buildTs = async (isDev: boolean = false) => {
-  const plugins = [typescript({ tsconfig: './tsconfig.json' }), nodeResolve(), terser()];
+  const plugins = [
+    typescript({ tsconfig: './tsconfig.json' }),
+    nodeResolve(),
+    svg({ stringify: true }),
+    terser(),
+  ];
   const bundle = await rollup({
     input: './src/index.ts',
     external: [/^quill/],
@@ -89,7 +95,7 @@ const buildTheme = async (isDev: boolean = false) => {
 const dev = () => {
   watch('./src/**/*.ts', parallel(
     buildTs.bind(undefined, true),
-    // buildDts
+    buildDts,
   ));
   watch('./src/**/*.scss', buildTheme.bind(undefined, true));
 };

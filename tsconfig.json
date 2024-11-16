@@ -8,7 +8,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": [],
+    "types": ["./src/types.d.ts", "./src/env.d.ts"],
     "allowJs": false,
     "strict": true,
     "noUnusedLocals": true,
