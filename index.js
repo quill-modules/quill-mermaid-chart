@@ -7,7 +7,6 @@ Quill.register({
 
 const quill = new Quill('#editor', {
   theme: 'snow',
-  readOnly: true,
   modules: {
     toolbar: [
       ['bold', 'italic', 'underline', 'strike'],
