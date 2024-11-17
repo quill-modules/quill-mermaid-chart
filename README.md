@@ -11,10 +11,10 @@ If you are familiar with Markdown you should have no problem learning [Mermaid's
 Makesure mermaid is loaded on window
 
 ```js
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+import QuillMermaid from 'quill-mermaid';
 
 Quill.register({
-  'modules/mermaid': bundle.QuillMermaid,
+  'modules/mermaid': QuillMermaid,
 }, true);
 
 const quill = new Quill('#editor', {
