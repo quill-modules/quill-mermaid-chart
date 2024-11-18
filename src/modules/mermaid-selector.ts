@@ -1,27 +1,27 @@
-import type { MermaidChartFormat } from '@/formats';
+import type { MermaidContainerFormat } from '@/formats';
 import type Quill from 'quill';
 import { addScrollEvent, clearScrollEvent, events } from '@/utils';
 import closeSvg from '../svg/close.svg';
 import editSvg from '../svg/edit.svg';
 
-export interface MermaidEditOptions {
+export interface MermaidSelectorOptions {
   onDestroy: () => void;
 }
-export class MermaidEdit {
-  options: MermaidEditOptions;
+export class MermaidSelector {
+  options: MermaidSelectorOptions;
   scrollHandler: [HTMLElement, (e: Event) => void][] = [];
   toolbox?: HTMLElement;
   selector?: HTMLDivElement;
   #internalDestroy: boolean = false;
   resizeOb?: ResizeObserver;
-  constructor(public quill: Quill, public mermaidBlot: MermaidChartFormat, options?: Partial<MermaidEditOptions>) {
+  constructor(public quill: Quill, public mermaidBlot: MermaidContainerFormat, options?: Partial<MermaidSelectorOptions>) {
     this.options = this.resolveOptions(options);
     this.toolbox = this.quill.addContainer('ql-toolbox');
 
     this.createSelector();
   }
 
-  resolveOptions(options?: Partial<MermaidEditOptions>) {
+  resolveOptions(options?: Partial<MermaidSelectorOptions>) {
     return Object.assign({
       onDestroy: () => { },
     }, options);

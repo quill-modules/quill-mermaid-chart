@@ -1,6 +1,6 @@
 import type TypeToolbar from 'quill/modules/toolbar';
 import { MermaidChartFormat } from '@/formats';
-import { MermaidEdit } from '@/modules';
+import { MermaidSelector } from '@/modules';
 import Quill from 'quill';
 import mermaidSvg from './svg/mermaid.svg';
 
@@ -14,7 +14,7 @@ export class QuillMermaid {
   }
 
   mermaidBlot?: MermaidChartFormat;
-  mermaidSelector?: MermaidEdit;
+  mermaidSelector?: MermaidSelector;
   constructor(public quill: Quill) {
     const toolbar = this.quill.getModule('toolbar') as TypeToolbar;
     if (toolbar) {
@@ -58,7 +58,7 @@ export class QuillMermaid {
     }
     if (mermaidBlot) {
       this.mermaidBlot = mermaidBlot;
-      this.mermaidSelector = new MermaidEdit(this.quill, this.mermaidBlot, {
+      this.mermaidSelector = new MermaidSelector(this.quill, this.mermaidBlot, {
         onDestroy: () => this.destroyMermaidSelector(),
       });
     }
