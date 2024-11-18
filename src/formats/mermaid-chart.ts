@@ -1,6 +1,6 @@
 import type { BlockEmbed as TypeBlockEmbed } from 'quill/blots/block';
 import type TypeScroll from 'quill/blots/scroll';
-import { calcTextareaHeight, events, randomId } from '@/utils';
+import { events, randomId, svgStringToBase64 } from '@/utils';
 import { createLoading } from '@/utils/components';
 import Quill from 'quill';
 
@@ -9,25 +9,24 @@ const BlockEmbed = Quill.import('blots/block/embed') as typeof TypeBlockEmbed;
 window.mermaid.initialize({ startOnLoad: false });
 
 export type MermaidChartFormatMode = 'edit' | 'chart';
-async function renderMermaidChart(id: string, value: string, container: HTMLElement) {
+
+async function renderMermaidChart(id: string, value: string, chart: HTMLElement) {
   let result = null;
   try {
     const valid = await window.mermaid.parse(value);
     if (valid) {
-      result = await window.mermaid.render(`chart-${id}`, value, container);
+      result = await window.mermaid.render(`chart-${id}`, value, chart);
     }
     if (result) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(result.svg, 'text/html');
-      const base64 = new XMLSerializer().serializeToString(doc.querySelector('svg')!);
+      const base64 = svgStringToBase64(result.svg);
       const img = new Image();
       img.src = `data:image/svg+xml;base64,${window.btoa(base64)}`;
-      container.appendChild(img);
+      chart.appendChild(img);
     }
   }
   catch (error: any) {
     console.error(error);
-    container.innerHTML = error.message;
+    chart.innerHTML = error.message;
   }
   return result;
 }
