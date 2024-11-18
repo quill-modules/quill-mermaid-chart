@@ -17,7 +17,12 @@ async function renderMermaidChart(id: string, value: string, container: HTMLElem
       result = await window.mermaid.render(`chart-${id}`, value, container);
     }
     if (result) {
-      container.innerHTML = result.svg;
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(result.svg, 'text/html');
+      const base64 = new XMLSerializer().serializeToString(doc.querySelector('svg')!);
+      const img = new Image();
+      img.src = `data:image/svg+xml;base64,${window.btoa(base64)}`;
+      container.appendChild(img);
     }
   }
   catch (error: any) {
@@ -27,14 +32,16 @@ async function renderMermaidChart(id: string, value: string, container: HTMLElem
   return result;
 }
 
+const dataKey = Symbol('data');
+type MermaidChartNode = HTMLElement & { [dataKey]: string };
 export class MermaidChartFormat extends BlockEmbed {
   static tagName = 'div';
   static blotName = 'mermaid-chart';
   static className = 'ql-mermaid-chart';
   static create(value: string) {
-    const node = super.create() as HTMLElement;
+    const node = super.create() as MermaidChartNode;
     node.setAttribute('contenteditable', 'false');
-    node.dataset.chart = value;
+    node[dataKey] = value;
     const id = randomId();
     node.dataset.id = id;
     const chart = document.createElement('div');
@@ -50,10 +57,11 @@ export class MermaidChartFormat extends BlockEmbed {
     return node;
   }
 
-  static value(domNode: HTMLElement) {
-    return domNode.dataset.chart || '';
+  static value(domNode: MermaidChartNode) {
+    return domNode[dataKey] || '';
   }
 
+  declare domNode: MermaidChartNode;
   mode: MermaidChartFormatMode = 'chart';
   editor?: HTMLTextAreaElement;
 
