@@ -1,0 +1,35 @@
+@use './func.scss' as *;
+
+.#{$namespace}-mermaid-loading {
+  &-mask {
+    @include setCssVar(loading-mask-color, rgba(200, 200, 200, 0.2));
+    @include setCssVar(loading-icon-color, #2299dd);
+
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: getCssVar(loading-mask-color);
+  }
+  &-icon {
+    width: 30px;
+    height: 30px;
+    box-sizing: border-box;
+    border-color: getCssVar(loading-icon-color) transparent transparent getCssVar(loading-icon-color);
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 50%;
+    animation: mermaid-load 0.4s linear infinite;
+  }
+}
+@keyframes mermaid-load {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

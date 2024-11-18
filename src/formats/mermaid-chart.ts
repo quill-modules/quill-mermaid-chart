@@ -1,6 +1,7 @@
 import type { BlockEmbed as TypeBlockEmbed } from 'quill/blots/block';
 import type TypeScroll from 'quill/blots/scroll';
 import { calcTextareaHeight, events, randomId } from '@/utils';
+import { createLoading } from '@/utils/components';
 import Quill from 'quill';
 
 const BlockEmbed = Quill.import('blots/block/embed') as typeof TypeBlockEmbed;
@@ -39,8 +40,10 @@ export class MermaidChartFormat extends BlockEmbed {
     const chart = document.createElement('div');
     chart.classList.add('chart');
     node.appendChild(chart);
+    const { close } = createLoading(node);
     new Promise<void>(async (resolve) => {
       await renderMermaidChart(id, value, chart);
+      close();
       resolve();
     });
 
