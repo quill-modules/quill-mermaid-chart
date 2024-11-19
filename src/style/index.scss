@@ -1,6 +1,7 @@
 @use './func.scss' as *;
 @use './loading.scss' as *;
 
+$border-radius: 8px;
 .#{$namespace} {
   &-toolbox {
     position: absolute;
@@ -15,16 +16,27 @@
     }
   }
   &-container &-mermaid {
+    &-container {
+      @include setCssVar(container-border-color, #e7e5e4);
+
+      display: flex;
+      width: 80%;
+      margin: 0px auto;
+      border: 1px solid getCssVar(container-border-color);
+      border-radius: $border-radius;
+    }
+    &-editor {
+      flex: 1;
+    }
     &-chart {
       @include setCssVar(editor-border-color, #414141);
 
+      flex: 1;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 80%;
       min-height: 40px;
-      margin: 0px auto;
       .editor {
         width: 100%;
         padding: 12px 16px;
@@ -55,7 +67,7 @@
 
       position: absolute;
       border: 2px dashed getCssVar(border-color);
-      border-radius: 8px;
+      border-radius: $border-radius;
       pointer-events: none;
       &-btn {
         display: flex;
@@ -109,7 +121,6 @@
         }
       }
       &.edit {
-        border-color: transparent;
         .#{$namespace} {
           &-mermaid-select-edit {
             &::after {

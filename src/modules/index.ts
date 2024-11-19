@@ -1,1 +1,1 @@
-export * from './mermaid-edit';
+export * from './mermaid-selector';

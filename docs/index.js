@@ -24,9 +24,7 @@ const quill = new Quill('#editor', {
       ['clean'],
       ['mermaid-chart'],
     ],
-    mermaid: {
-
-    },
+    mermaid: {},
   },
 });
 
@@ -60,23 +58,23 @@ flowchart LR
   {
     insert: '\n',
   },
-  {
-    insert: {
-      'mermaid-chart': `sequenceDiagram
-    Alice->>John: Hello John, how are you?
-    John-->>Alice: Great!
-    Alice-)John: See you later!`,
-    },
-  },
-  {
-    insert: '\n',
-  },
-  {
-    insert: {
-      'mermaid-chart': `pie title Pets adopted by volunteers
-    "Dogs" : 386
-    "Cats" : 85
-    "Rats" : 15`,
-    },
-  },
+  // {
+  //   insert: {
+  //     'mermaid-chart': `sequenceDiagram
+  //   Alice->>John: Hello John, how are you?
+  //   John-->>Alice: Great!
+  //   Alice-)John: See you later!`,
+  //   },
+  // },
+  // {
+  //   insert: '\n',
+  // },
+  // {
+  //   insert: {
+  //     'mermaid-chart': `pie title Pets adopted by volunteers
+  //   "Dogs" : 386
+  //   "Cats" : 85
+  //   "Rats" : 15`,
+  //   },
+  // },
 ]);
