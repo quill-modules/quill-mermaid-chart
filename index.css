@@ -1,3 +1,32 @@
+.ql-mermaid-loading-mask {
+  --ql-loading-mask-color: rgba(200, 200, 200, 0.2);
+  --ql-loading-icon-color: #2299dd;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--ql-loading-mask-color);
+}
+.ql-mermaid-loading-icon {
+  width: 30px;
+  height: 30px;
+  box-sizing: border-box;
+  border-color: var(--ql-loading-icon-color) transparent transparent var(--ql-loading-icon-color);
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 50%;
+  animation: mermaid-load 0.4s linear infinite;
+}
+
+@keyframes mermaid-load {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .ql-toolbox {
   position: absolute;
   top: 0px;
@@ -10,14 +39,25 @@
 .ql-toolbox * {
   pointer-events: all;
 }
+.ql-container .ql-mermaid-container {
+  --ql-container-border-color: #e7e5e4;
+  display: flex;
+  width: 80%;
+  margin: 0px auto;
+  border: 1px solid var(--ql-container-border-color);
+  border-radius: 8px;
+}
+.ql-container .ql-mermaid-editor {
+  flex: 1;
+}
 .ql-container .ql-mermaid-chart {
   --ql-editor-border-color: #414141;
+  flex: 1;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80%;
   min-height: 40px;
-  margin: 0px auto;
 }
 .ql-container .ql-mermaid-chart .editor {
   width: 100%;
@@ -32,6 +72,12 @@
 .ql-container .ql-mermaid-chart .editor:focus {
   --ql-editor-border-color: #ff3570;
   outline: none;
+}
+.ql-container .ql-mermaid-chart .chart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 .ql-container .ql-mermaid-select {
   --ql-text-color: #171717;
@@ -94,9 +140,6 @@
 }
 .ql-container .ql-mermaid-select-edit::after {
   content: "edit";
-}
-.ql-container .ql-mermaid-select.edit {
-  border-color: transparent;
 }
 .ql-container .ql-mermaid-select.edit .ql-mermaid-select-edit::after {
   content: "save";
