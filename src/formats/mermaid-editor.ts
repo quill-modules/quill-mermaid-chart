@@ -1,5 +1,6 @@
 import type TypeContainer from 'quill/blots/container';
 import type TypeScroll from 'quill/blots/scroll';
+import { events } from '@/utils';
 import Quill from 'quill';
 import { MermaidCodeBlock } from './mermaid-code-block';
 
@@ -38,7 +39,7 @@ export class MermaidEditorFormat extends Container {
         scroll.emitter.emit(Quill.events.SCROLL_UPDATE);
       }
       catch {}
-      scroll.emitter.emit('mermaid-edit-change');
+      scroll.emitter.emit(events.mermaidTextChange);
     });
     ob.observe(domNode, {
       attributes: true,

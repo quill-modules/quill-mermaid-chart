@@ -50,7 +50,7 @@ export class MermaidContainerFormat extends Container {
     editor.appendChild(codeContainer);
 
     // @ts-ignore
-    this.scroll.emitter.on(events.mermaidModeChange, this.updateChart);
+    this.scroll.emitter.on(events.mermaidTextChange, this.updateChart);
     this.insertBefore(editor, this.children.head);
   }
 
