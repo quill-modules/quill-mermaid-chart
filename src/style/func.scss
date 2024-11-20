@@ -1,6 +1,7 @@
 $namespace: ql;
+$moduleNamespace: qmc;
 
-@mixin setCssVar($name, $value, $np: $namespace) {
+@mixin setCssVar($name, $value, $np: $moduleNamespace) {
   @if $np == '' {
     --#{$name}: #{$value};
   } @else {
@@ -8,6 +9,6 @@ $namespace: ql;
   }
 }
 
-@function getCssVar($name, $np: $namespace) {
+@function getCssVar($name, $np: $moduleNamespace) {
   @return if($np == '', var(--#{$name}), var(--#{$np}-#{$name}));
 }

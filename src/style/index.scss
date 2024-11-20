@@ -1,5 +1,6 @@
 @use './func.scss' as *;
 @use './loading.scss' as *;
+@use './dialog.scss' as *;
 
 $border-radius: 8px;
 .#{$namespace} {
@@ -16,44 +17,19 @@ $border-radius: 8px;
     }
   }
   &-container &-mermaid {
-    &-container {
-      @include setCssVar(container-border-color, #e7e5e4);
-
-      display: flex;
-      width: 80%;
-      margin: 0px auto;
-      border: 1px solid getCssVar(container-border-color);
-      border-radius: $border-radius;
-    }
-    &-editor {
-      flex: 1;
-    }
     &-chart {
       @include setCssVar(editor-border-color, #414141);
 
-      flex: 1;
       position: relative;
       display: flex;
-      align-items: center;
       justify-content: center;
+      max-width: 80%;
       min-height: 40px;
-      .editor {
-        width: 100%;
-        padding: 12px 16px;
-        border-radius: 8px;
-        resize: none;
-        height: 96px;
-        border: 1px solid getCssVar(editor-border-color);
-        background-color: transparent;
-        font-family: inherit;
-        &:focus {
-          @include setCssVar(editor-border-color, #ff3570);
-          outline: none;
-        }
-      }
+      margin: auto;
+      overflow: auto;
       .chart {
+        flex-shrink: 0;
         display: flex;
-        align-items: center;
         justify-content: center;
         width: 100%;
       }
@@ -62,7 +38,7 @@ $border-radius: 8px;
       @include setCssVar(text-color, #171717);
       @include setCssVar(border-color, #7dd3fc);
       @include setCssVar(bg-color, #f4f4f5);
-      @include setCssVar(tip-bg-color, rgb(66, 66, 66));
+      @include setCssVar(tip-bg-color, #424242);
       @include setCssVar(tip-text-color, #ffffff);
 
       position: absolute;
@@ -120,15 +96,6 @@ $border-radius: 8px;
           content: 'edit';
         }
       }
-      &.edit {
-        .#{$namespace} {
-          &-mermaid-select-edit {
-            &::after {
-              content: 'save';
-            }
-          }
-        }
-      }
     }
     &-icon {
       display: flex;
@@ -136,6 +103,33 @@ $border-radius: 8px;
       justify-content: center;
       color: currentColor;
       cursor: pointer;
+    }
+  }
+}
+
+.#{$moduleNamespace}-mermaid {
+  &-editor {
+    display: flex;
+    height: 600px;
+    border: 1px solid #e5e7eb;
+  }
+  &-input,
+  &-preview {
+    width: 50%;
+    overflow: auto;
+  }
+  &-input {
+    pre {
+      margin: 0;
+      outline: none;
+    }
+  }
+  &-preview {
+    display: flex;
+    padding: 16px;
+    border-left: 1px solid #e5e7eb;
+    &-chart {
+      margin: auto;
     }
   }
 }
