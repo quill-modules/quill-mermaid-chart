@@ -25,7 +25,7 @@ export class MermaidEditor {
       cancel: false,
     });
     this.closeEditor = close;
-    dialog.style.maxWidth = '1024px';
+    dialog.style.maxWidth = `${Math.min(1024, window.innerWidth * 0.8)}px`;
   }
 
   resolveOptions(options?: Partial<MerMaidOptions>): MerMaidOptions {
@@ -76,6 +76,7 @@ export class MermaidEditor {
     this.preview.appendChild(this.chart);
     this.editor.appendChild(textInputBox);
     this.editor.appendChild(this.preview);
+    this.editor.style.height = `${Math.min(600, window.innerHeight * 0.5)}px`;
     return this.editor;
   }
 }
