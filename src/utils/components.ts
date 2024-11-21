@@ -22,6 +22,7 @@ export interface DialogOptions {
   description?: string;
   confirm?: boolean;
   cancel?: boolean;
+  clickMaskClose?: boolean;
   onClose?: () => void;
   onShow?: () => void;
   onConfirm?: () => Promise<void> | void;
@@ -34,6 +35,7 @@ export const createDialog = (options?: DialogOptions) => {
     content,
     confirm = true,
     cancel = true,
+    clickMaskClose = true,
     onClose,
     onShow,
     onConfirm,
@@ -132,9 +134,10 @@ export const createDialog = (options?: DialogOptions) => {
     }
   };
   const bindClose = () => {
-    for (const item of [mask, closeBtn]) {
-      item.addEventListener('click', close);
+    if (clickMaskClose) {
+      mask.addEventListener('click', close);
     }
+    closeBtn.addEventListener('click', close);
     document.addEventListener('keydown', keyboardClose);
     dialog.addEventListener('click', e => e.stopPropagation());
     dialog.addEventListener('keydown', e => e.stopPropagation());

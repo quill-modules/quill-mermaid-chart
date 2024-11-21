@@ -2,23 +2,25 @@ import type { MermaidChartFormat } from '@/formats';
 import type Quill from 'quill';
 import { createDialog, debounce, renderMermaidInNode } from '@/utils';
 
-export interface MerMaidOptions {
+export interface MerMaidEditorOptions {
+  dialogMaskClickClose: boolean;
   onClose: () => void;
 }
 export class MermaidEditor {
   closeEditor: () => void;
-  options: MerMaidOptions;
+  options: MerMaidEditorOptions;
   editor!: HTMLElement;
   preview!: HTMLElement;
   chart!: HTMLElement;
   textInput!: HTMLElement;
-  constructor(public quill: Quill, public mermaidBlot: MermaidChartFormat, options?: Partial<MerMaidOptions>) {
+  constructor(public quill: Quill, public mermaidBlot: MermaidChartFormat, options?: Partial<MerMaidEditorOptions>) {
     this.options = this.resolveOptions(options);
 
     const { dialog, close } = createDialog({
       content: this.createEditor(),
       onClose: this.options.onClose,
       onShow: () => this.updatePreview(),
+      clickMaskClose: this.options.dialogMaskClickClose,
       onConfirm: () => {
         this.mermaidBlot.text = this.getInputText();
       },
@@ -28,8 +30,9 @@ export class MermaidEditor {
     dialog.style.maxWidth = `${Math.min(1024, window.innerWidth * 0.8)}px`;
   }
 
-  resolveOptions(options?: Partial<MerMaidOptions>): MerMaidOptions {
+  resolveOptions(options?: Partial<MerMaidEditorOptions>): MerMaidEditorOptions {
     return Object.assign({
+      dialogMaskClickClose: true,
       onClose: () => {},
     }, options);
   }

@@ -1,8 +1,13 @@
+import type { MerMaidEditorOptions } from '@/modules';
 import type TypeToolbar from 'quill/modules/toolbar';
 import { MermaidChartFormat } from '@/formats';
 import { MermaidSelector } from '@/modules';
 import Quill from 'quill';
 import mermaidSvg from './svg/mermaid.svg';
+
+export interface QuillMermaidOptions {
+  editor: MerMaidEditorOptions;
+}
 
 export class QuillMermaid {
   static register() {
@@ -16,7 +21,9 @@ export class QuillMermaid {
 
   mermaidBlot?: MermaidChartFormat;
   mermaidSelector?: MermaidSelector;
-  constructor(public quill: Quill) {
+  options: QuillMermaidOptions;
+  constructor(public quill: Quill, options?: Partial<QuillMermaidOptions>) {
+    this.options = this.resolveOptions(options);
     const toolbar = this.quill.getModule('toolbar') as TypeToolbar;
     if (toolbar) {
       toolbar.addHandler(MermaidChartFormat.blotName, () => {
@@ -49,6 +56,12 @@ export class QuillMermaid {
       },
       false,
     );
+  }
+
+  resolveOptions(options: Partial<QuillMermaidOptions> = {}): QuillMermaidOptions {
+    return Object.assign({
+      editor: {},
+    }, options);
   }
 
   updateMermaidSelector(mermaidBlot: MermaidChartFormat) {
