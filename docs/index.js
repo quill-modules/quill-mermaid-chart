@@ -24,7 +24,17 @@ const quill = new Quill('#editor', {
       ['clean'],
       ['mermaid-chart'],
     ],
-    mermaid: {},
+    mermaid: {
+      // editor: {
+      //   dialogMaskClickClose: false,
+      //   onClose() {
+      //     console.log('close', this);
+      //   },
+      // },
+      // histroyStackOptions: {
+      //   maxStack: 10,
+      // },
+    },
   },
 });
 
