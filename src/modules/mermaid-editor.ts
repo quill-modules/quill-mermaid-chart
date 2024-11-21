@@ -1,6 +1,6 @@
 import type { MermaidChartFormat } from '@/formats';
 import type Quill from 'quill';
-import { createDialog, renderMermaidInNode } from '@/utils';
+import { createDialog, debounce, renderMermaidInNode } from '@/utils';
 
 export interface MerMaidOptions {
   onClose: () => void;
@@ -18,16 +18,9 @@ export class MermaidEditor {
     const { dialog, close } = createDialog({
       content: this.createEditor(),
       onClose: this.options.onClose,
-      onShow: () => {
-        renderMermaidInNode(this.preview, 'preview', this.mermaidBlot.text, this.chart);
-      },
+      onShow: () => this.updatePreview(),
       onConfirm: () => {
-        const texts: string[] = [];
-        for (const line of Array.from(this.textInput.children)) {
-          texts.push(line.textContent || '');
-        }
-        const text = texts.join('\n');
-        this.mermaidBlot.text = text;
+        this.mermaidBlot.text = this.getInputText();
       },
       cancel: false,
     });
@@ -41,12 +34,26 @@ export class MermaidEditor {
     }, options);
   }
 
+  updatePreview() {
+    renderMermaidInNode(this.preview, 'preview', this.getInputText(), this.chart);
+  }
+
+  getInputText() {
+    const texts: string[] = [];
+    for (const line of Array.from(this.textInput.children)) {
+      texts.push(line.textContent || '');
+    }
+    const text = texts.join('\n');
+    return text;
+  }
+
   createEditor() {
     this.editor = document.createElement('div');
     this.editor.classList.add('qmc-mermaid-editor');
     const textInputBox = document.createElement('div');
     textInputBox.classList.add('qmc-mermaid-input');
     this.textInput = document.createElement('pre');
+    this.textInput.classList.add('qmc-mermaid-input-content');
     this.textInput.setAttribute('contenteditable', 'true');
     for (const text of this.mermaidBlot.text.split('\n')) {
       const line = document.createElement('div');
@@ -58,6 +65,9 @@ export class MermaidEditor {
         e.preventDefault();
       }
     });
+    this.textInput.addEventListener('input', debounce(() => {
+      this.updatePreview();
+    }, 500));
     textInputBox.appendChild(this.textInput);
     this.preview = document.createElement('div');
     this.preview.classList.add('qmc-mermaid-preview');

@@ -119,12 +119,15 @@ $border-radius: 8px;
     overflow: auto;
   }
   &-input {
-    pre {
+    &-content {
+      height: 100%;
       margin: 0;
+      padding: 16px;
       outline: none;
     }
   }
   &-preview {
+    position: relative;
     display: flex;
     padding: 16px;
     border-left: 1px solid #e5e7eb;
