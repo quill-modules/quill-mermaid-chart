@@ -1,25 +1,25 @@
-.ql-mermaid-loading-mask {
-  --ql-loading-mask-color: rgba(200, 200, 200, 0.2);
-  --ql-loading-icon-color: #2299dd;
+.qmc-loading-mask {
+  --qmc-loading-mask-color: rgba(200, 200, 200, 0.2);
+  --qmc-loading-icon-color: #2299dd;
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--ql-loading-mask-color);
+  background-color: var(--qmc-loading-mask-color);
 }
-.ql-mermaid-loading-icon {
+.qmc-loading-icon {
   width: 30px;
   height: 30px;
   box-sizing: border-box;
-  border-color: var(--ql-loading-icon-color) transparent transparent var(--ql-loading-icon-color);
+  border-color: var(--qmc-loading-icon-color) transparent transparent var(--qmc-loading-icon-color);
   border-style: solid;
   border-width: 2px;
   border-radius: 50%;
-  animation: mermaid-load 0.4s linear infinite;
+  animation: qmc-load 0.4s linear infinite;
 }
 
-@keyframes mermaid-load {
+@keyframes qmc-load {
   0% {
     transform: rotate(0deg);
   }
@@ -27,6 +27,153 @@
     transform: rotate(360deg);
   }
 }
+.qmc-mask {
+  --mask-opacity: 0;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition-duration: 0.15s;
+  transition-property: opacity;
+  transition-timing-function: linear;
+  opacity: var(--mask-opacity);
+}
+.qmc-mask.open {
+  --mask-opacity: 1;
+}
+.qmc-mask.close {
+  --mask-opacity: 0;
+}
+
+.qmc-dialog {
+  --qmc-border-radius: 8px;
+  --qmc-border-color: #e5e7eb;
+  --qmc-transform-x: -50%;
+  --qmc-transform-y: -50%;
+  --qmc-transform-scale: 0.5;
+  --qmc-description-color: #71717a;
+  --qmc-confirm-border-color: transparent;
+  --qmc-confirm-border-color-hover: transparent;
+  --qmc-confirm-bg-color: rgb(24, 24, 27);
+  --qmc-confirm-bg-color-hover: rgba(24, 24, 27, 0.9);
+  --qmc-confirm-text-color: rgb(250, 250, 250);
+  --qmc-confirm-text-color-hover: rgb(250, 250, 250);
+  --qmc-cancel-border-color: rgb(228, 228, 231);
+  --qmc-cancel-border-color-hover: rgb(228, 228, 231);
+  --qmc-cancel-bg-color: rgb(255, 255, 255);
+  --qmc-cancel-bg-color-hover: rgb(244, 244, 245);
+  --qmc-cancel-text-color: rgb(24, 24, 27);
+  --qmc-cancel-text-color-hover: rgb(24, 24, 27);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(var(--qmc-transform-x), var(--qmc-transform-y)) scale(var(--qmc-transform-scale));
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 512px;
+  padding: 24px;
+  border: 1px solid var(--qmc-border-color);
+  border-radius: var(--qmc-border-radius);
+  background-color: #ffffff;
+  transition-duration: 0.15s;
+  transition-property: transform;
+  transition-timing-function: linear;
+}
+.qmc-dialog.open {
+  --qmc-transform-scale: 1;
+}
+.qmc-dialog.close {
+  --qmc-transform-scale: 0.8;
+}
+.qmc-dialog-btn {
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  font-size: 14px;
+  cursor: pointer;
+}
+.qmc-dialog-close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  opacity: 0.7;
+  transition: opacity 0.15s linear;
+  font-size: 16px;
+}
+.qmc-dialog-close:hover {
+  opacity: 1;
+}
+.qmc-dialog-header {
+  display: flex;
+  flex-direction: column;
+}
+.qmc-dialog-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.qmc-dialog-description {
+  margin: 0;
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--qmc-description-color);
+}
+.qmc-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0px;
+}
+.qmc-dialog-footer {
+  display: flex;
+}
+.qmc-dialog-confirm, .qmc-dialog-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition-property: color, background-color;
+  transition-duration: 0.15s;
+  transition-timing-function: linear;
+  font-weight: 500;
+}
+.qmc-dialog-confirm {
+  margin-left: auto;
+  border-color: var(--qmc-confirm-border-color);
+  background-color: var(--qmc-confirm-bg-color);
+  color: var(--qmc-confirm-text-color);
+}
+.qmc-dialog-confirm:hover {
+  border-color: var(--qmc-confirm-border-color-hover);
+  background-color: var(--qmc-confirm-bg-color-hover);
+  color: var(--qmc-confirm-text-color-hover);
+}
+.qmc-dialog-cancel {
+  margin-left: auto;
+  border-color: var(--qmc-cancel-border-color);
+  background-color: var(--qmc-cancel-bg-color);
+  color: var(--qmc-cancel-text-color);
+}
+.qmc-dialog-cancel:hover {
+  border-color: var(--qmc-cancel-border-color-hover);
+  background-color: var(--qmc-cancel-bg-color-hover);
+  color: var(--qmc-cancel-text-color-hover);
+}
+.qmc-dialog-cancel + .qmc-dialog-confirm {
+  margin-left: 8px;
+}
+
 .ql-toolbox {
   position: absolute;
   top: 0px;
@@ -39,54 +186,30 @@
 .ql-toolbox * {
   pointer-events: all;
 }
-.ql-container .ql-mermaid-container {
-  --ql-container-border-color: #e7e5e4;
-  display: flex;
-  width: 80%;
-  margin: 0px auto;
-  border: 1px solid var(--ql-container-border-color);
-  border-radius: 8px;
-}
-.ql-container .ql-mermaid-editor {
-  flex: 1;
-}
 .ql-container .ql-mermaid-chart {
-  --ql-editor-border-color: #414141;
-  flex: 1;
+  --qmc-editor-border-color: #414141;
   position: relative;
   display: flex;
-  align-items: center;
   justify-content: center;
+  max-width: 80%;
   min-height: 40px;
-}
-.ql-container .ql-mermaid-chart .editor {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 8px;
-  resize: none;
-  height: 96px;
-  border: 1px solid var(--ql-editor-border-color);
-  background-color: transparent;
-  font-family: inherit;
-}
-.ql-container .ql-mermaid-chart .editor:focus {
-  --ql-editor-border-color: #ff3570;
-  outline: none;
+  margin: auto;
+  overflow: auto;
 }
 .ql-container .ql-mermaid-chart .chart {
+  flex-shrink: 0;
   display: flex;
-  align-items: center;
   justify-content: center;
   width: 100%;
 }
 .ql-container .ql-mermaid-select {
-  --ql-text-color: #171717;
-  --ql-border-color: #7dd3fc;
-  --ql-bg-color: #f4f4f5;
-  --ql-tip-bg-color: rgb(66, 66, 66);
-  --ql-tip-text-color: #ffffff;
+  --qmc-text-color: #171717;
+  --qmc-border-color: #7dd3fc;
+  --qmc-bg-color: #f4f4f5;
+  --qmc-tip-bg-color: #424242;
+  --qmc-tip-text-color: #ffffff;
   position: absolute;
-  border: 2px dashed var(--ql-border-color);
+  border: 2px dashed var(--qmc-border-color);
   border-radius: 8px;
   pointer-events: none;
 }
@@ -101,16 +224,16 @@
   height: 28px;
   border: none;
   border-radius: 50%;
-  background-color: var(--ql-bg-color);
-  color: var(--ql-text-color);
+  background-color: var(--qmc-bg-color);
+  color: var(--qmc-text-color);
   font-size: 20px;
   cursor: pointer;
   transition-duration: 0.3s;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.11);
 }
 .ql-container .ql-mermaid-select-btn:hover {
-  --ql-text-color: #fafafa;
-  --ql-bg-color: #38bdf8;
+  --qmc-text-color: #fafafa;
+  --qmc-bg-color: #38bdf8;
 }
 .ql-container .ql-mermaid-select-btn:hover::after {
   display: flex;
@@ -124,8 +247,8 @@
   height: 24px;
   padding: 0px 10px;
   border-radius: 4px;
-  color: var(--ql-tip-text-color);
-  background-color: var(--ql-tip-bg-color);
+  color: var(--qmc-tip-text-color);
+  background-color: var(--qmc-tip-bg-color);
   font-size: 14px;
   transform: translateX(calc(-50% - 20px));
 }
@@ -141,13 +264,40 @@
 .ql-container .ql-mermaid-select-edit::after {
   content: "edit";
 }
-.ql-container .ql-mermaid-select.edit .ql-mermaid-select-edit::after {
-  content: "save";
-}
 .ql-container .ql-mermaid-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   color: currentColor;
   cursor: pointer;
+}
+
+.qmc-mermaid-editor {
+  display: flex;
+  height: 600px;
+  border: 1px solid #e5e7eb;
+}
+.qmc-mermaid-input, .qmc-mermaid-preview {
+  width: 50%;
+  overflow: auto;
+}
+.qmc-mermaid-input-content {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 16px;
+  outline: none;
+  border: none;
+  resize: none;
+}
+.qmc-mermaid-preview {
+  position: relative;
+  display: flex;
+  padding: 16px;
+  border-left: 1px solid #e5e7eb;
+}
+.qmc-mermaid-preview-chart {
+  margin: auto;
 }
