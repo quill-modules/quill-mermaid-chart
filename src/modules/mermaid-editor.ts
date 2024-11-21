@@ -1,6 +1,8 @@
 import type { MermaidChartFormat } from '@/formats';
 import type Quill from 'quill';
-import { createDialog, debounce, renderMermaidInNode } from '@/utils';
+import type { EditorInputElement, HistroyInputOptions } from './history-input';
+import { createDialog, debounce, renderMermaidInNode, SHORTKEY } from '@/utils';
+import { HistroyInput } from './history-input';
 
 export interface MerMaidEditorOptions {
   dialogMaskClickClose: boolean;
@@ -12,9 +14,11 @@ export class MermaidEditor {
   editor!: HTMLElement;
   preview!: HTMLElement;
   chart!: HTMLElement;
-  textInput!: HTMLElement;
-  constructor(public quill: Quill, public mermaidBlot: MermaidChartFormat, options?: Partial<MerMaidEditorOptions>) {
+  textInput!: HistroyInput;
+  histroyStackOptions?: Partial<HistroyInputOptions>;
+  constructor(public quill: Quill, public mermaidBlot: MermaidChartFormat, options?: Partial<MerMaidEditorOptions>, histroyStackOptions?: Partial<HistroyInputOptions>) {
     this.options = this.resolveOptions(options);
+    this.histroyStackOptions = histroyStackOptions;
 
     const { dialog, close } = createDialog({
       content: this.createEditor(),
@@ -42,12 +46,41 @@ export class MermaidEditor {
   }
 
   getInputText() {
-    const texts: string[] = [];
-    for (const line of Array.from(this.textInput.children)) {
-      texts.push(line.textContent || '');
-    }
-    const text = texts.join('\n');
-    return text;
+    return this.textInput.el.value;
+  }
+
+  bindInputEvent() {
+    const renderPreview = debounce(() => {
+      this.updatePreview();
+    }, 500);
+    this.textInput.el.addEventListener('keydown', (e) => {
+      let isNeedUpdate = false;
+      if (e.code === 'Tab') {
+        e.preventDefault();
+        const { selectionStart, selectionEnd } = this.textInput.el;
+        const input = e.target! as EditorInputElement;
+        input.value = `${input.value.slice(0, selectionStart)}  ${input.value.slice(selectionEnd)}`;
+        input.setSelectionRange(selectionStart + 2, selectionStart + 2);
+        isNeedUpdate = true;
+      }
+      if (e[SHORTKEY] && e.code === 'KeyZ') {
+        if (e.shiftKey) {
+          this.textInput.redo();
+        }
+        else {
+          this.textInput.undo();
+        }
+        e.preventDefault();
+        isNeedUpdate = true;
+      }
+
+      if (isNeedUpdate) {
+        renderPreview();
+      }
+    });
+    this.textInput.el.addEventListener('input', () => {
+      renderPreview();
+    });
   }
 
   createEditor() {
@@ -55,23 +88,11 @@ export class MermaidEditor {
     this.editor.classList.add('qmc-mermaid-editor');
     const textInputBox = document.createElement('div');
     textInputBox.classList.add('qmc-mermaid-input');
-    this.textInput = document.createElement('pre');
-    this.textInput.classList.add('qmc-mermaid-input-content');
-    this.textInput.setAttribute('contenteditable', 'true');
-    for (const text of this.mermaidBlot.text.split('\n')) {
-      const line = document.createElement('div');
-      line.textContent = text;
-      this.textInput.appendChild(line);
-    }
-    this.textInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Tab') {
-        e.preventDefault();
-      }
-    });
-    this.textInput.addEventListener('input', debounce(() => {
-      this.updatePreview();
-    }, 500));
-    textInputBox.appendChild(this.textInput);
+    this.textInput = new HistroyInput(document.createElement('textarea'), this.histroyStackOptions);
+    this.textInput.el.classList.add('qmc-mermaid-input-content');
+    this.textInput.el.value = this.mermaidBlot.text;
+    this.bindInputEvent();
+    textInputBox.appendChild(this.textInput.el);
     this.preview = document.createElement('div');
     this.preview.classList.add('qmc-mermaid-preview');
     this.chart = document.createElement('div');

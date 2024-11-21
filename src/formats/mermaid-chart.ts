@@ -1,10 +1,10 @@
 import type { BlockEmbed as TypeBlockEmbed } from 'quill/blots/block';
-import { chartTemplate, dataKey, randomId, renderMermaidInNode } from '@/utils';
+import { chartTemplate, mermaidDataKey, randomId, renderMermaidInNode } from '@/utils';
 import Quill from 'quill';
 
 const BlockEmbed = Quill.import('blots/block/embed') as typeof TypeBlockEmbed;
 
-type MermaidChartNode = HTMLElement & { [dataKey]: string };
+type MermaidChartNode = HTMLElement & { [mermaidDataKey]: string };
 
 export class MermaidChartFormat extends BlockEmbed {
   static tagName = 'div';
@@ -15,7 +15,7 @@ export class MermaidChartFormat extends BlockEmbed {
     if (!value) value = chartTemplate.flowchart;
     const node = super.create() as MermaidChartNode;
     node.setAttribute('contenteditable', 'false');
-    node[dataKey] = value;
+    node[mermaidDataKey] = value;
     const id = randomId();
     node.dataset.id = id;
     const chart = document.createElement('div');
@@ -26,7 +26,7 @@ export class MermaidChartFormat extends BlockEmbed {
   }
 
   static value(domNode: MermaidChartNode) {
-    return domNode[dataKey] || '';
+    return domNode[mermaidDataKey] || '';
   }
 
   declare domNode: MermaidChartNode;
@@ -36,11 +36,11 @@ export class MermaidChartFormat extends BlockEmbed {
   }
 
   get text() {
-    return this.domNode[dataKey];
+    return this.domNode[mermaidDataKey];
   }
 
   set text(value: string) {
-    this.domNode[dataKey] = value;
+    this.domNode[mermaidDataKey] = value;
     renderMermaidInNode(this.domNode, this.id, value, this.getChart());
   }
 
