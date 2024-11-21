@@ -1,29 +1,37 @@
-import type { MermaidContainerFormat } from '@/formats';
+import type { MermaidChartFormat } from '@/formats';
 import type Quill from 'quill';
+import type { HistroyInputOptions } from './history-input';
+import type { MerMaidEditorOptions } from './mermaid-editor';
 import { addScrollEvent, clearScrollEvent, events } from '@/utils';
 import closeSvg from '../svg/close.svg';
 import editSvg from '../svg/edit.svg';
+import { MermaidEditor } from './mermaid-editor';
 
 export interface MermaidSelectorOptions {
   onDestroy: () => void;
+  editorOptions: Partial<MerMaidEditorOptions>;
 }
 export class MermaidSelector {
+  #internalDestroy: boolean = false;
   options: MermaidSelectorOptions;
   scrollHandler: [HTMLElement, (e: Event) => void][] = [];
   toolbox?: HTMLElement;
   selector?: HTMLDivElement;
-  #internalDestroy: boolean = false;
   resizeOb?: ResizeObserver;
-  constructor(public quill: Quill, public mermaidBlot: MermaidContainerFormat, options?: Partial<MermaidSelectorOptions>) {
+  editor?: MermaidEditor;
+  histroyStackOptions?: Partial<HistroyInputOptions>;
+  constructor(public quill: Quill, public mermaidBlot: MermaidChartFormat, options?: Partial<MermaidSelectorOptions>, histroyStackOptions?: Partial<HistroyInputOptions>) {
     this.options = this.resolveOptions(options);
-    this.toolbox = this.quill.addContainer('ql-toolbox');
+    this.histroyStackOptions = histroyStackOptions;
 
+    this.toolbox = this.quill.addContainer('ql-toolbox');
     this.createSelector();
   }
 
   resolveOptions(options?: Partial<MermaidSelectorOptions>) {
     return Object.assign({
-      onDestroy: () => { },
+      onDestroy: () => {},
+      editorOptions: {},
     }, options);
   }
 
@@ -71,9 +79,15 @@ export class MermaidSelector {
       iconStr: editSvg,
       classList: ['ql-mermaid-select-edit'],
       click: () => {
-        this.mermaidBlot.switchMode();
-        this.#internalDestroy = true;
-        this.destroy();
+        this.editor = new MermaidEditor(this.quill, this.mermaidBlot, {
+          ...this.options.editorOptions,
+          onClose: () => {
+            this.editor = undefined;
+            if (this.options.editorOptions.onClose) {
+              this.options.editorOptions.onClose();
+            }
+          },
+        }, this.histroyStackOptions);
       },
     });
     const removeBtn = createBtnIcon({
@@ -90,7 +104,6 @@ export class MermaidSelector {
         this.selector.classList.add(mode);
       }
     });
-    this.selector?.classList.add(this.mermaidBlot.mode);
 
     this.selector.appendChild(removeBtn);
     this.selector.appendChild(editBtn);

@@ -16,13 +16,13 @@ const CONTEXT_STYLE = [
   'box-sizing',
 ];
 const HIDDEN_STYLE = `
-    height:0 !important;
-    visibility:hidden !important;
-    overflow:hidden !important;
-    position:absolute !important;
-    z-index:-1000 !important;
-    top:0 !important;
-    right:0 !important;
+  height:0 !important;
+  visibility:hidden !important;
+  overflow:hidden !important;
+  position:absolute !important;
+  z-index:-1000 !important;
+  top:0 !important;
+  right:0 !important;
 `;
 export const calcTextareaHeight = (targetElement: HTMLTextAreaElement) => {
   const style = getComputedStyle(targetElement);

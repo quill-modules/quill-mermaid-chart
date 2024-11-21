@@ -37,7 +37,25 @@ const quill = new Quill('#editor', {
       // add mermaid chart button
       ['mermaid-chart'],
     ],
-    mermaid: true
+    mermaid: {
+      editor: {
+        dialogMaskClickClose: false,
+        onClose() {
+          console.log('dialog close');
+        },
+      },
+      histroyStackOptions: {
+        maxStack: 10,
+      },
+    }
   },
 });
 ```
+
+## Options
+
+| attribute                    | description                                           | type         | default |
+| ---------------------------- | ----------------------------------------------------- | ------------ | ------- |
+| editor.dialogMaskClickClose  | whether the dialog can be closed by clicking the mask | `boolean`    | `true`  |
+| editor.onClose               | triggers when the dialog closed                       | `() => void` | -       |
+| histroyStackOptions.maxStack | max record mermaid editor history                     | `number`     | `100`   |

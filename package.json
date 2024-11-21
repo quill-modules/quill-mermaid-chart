@@ -14,6 +14,9 @@
     "mermaid": "^11.4.0",
     "quill": "^2.0.0"
   },
+  "dependencies": {
+    "js-base64": "^3.7.7"
+  },
   "devDependencies": {
     "@esbuild-kit/cjs-loader": "^2.4.4",
     "@rollup/plugin-node-resolve": "^15.3.0",

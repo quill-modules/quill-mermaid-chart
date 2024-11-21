@@ -1,45 +1,17 @@
-import type { Range } from 'quill';
-import type TypeContainer from 'quill/blots/container';
-import type TypeKeyboard from 'quill/modules/keyboard';
-import type { Context } from 'quill/modules/keyboard';
+import type { MerMaidEditorOptions } from '@/modules';
 import type TypeToolbar from 'quill/modules/toolbar';
-import { MermaidChartFormat, MermaidContainerFormat, MermaidEditorFormat } from '@/formats';
+import type { HistroyInputOptions } from './modules/history-input';
+import { MermaidChartFormat } from '@/formats';
 import { MermaidSelector } from '@/modules';
 import Quill from 'quill';
 import mermaidSvg from './svg/mermaid.svg';
 
-const CodeBlockContainer = Quill.import('formats/code-block-container') as typeof TypeContainer;
-MermaidChartFormat.requiredContainer = MermaidContainerFormat;
-MermaidContainerFormat.allowedChildren = [MermaidChartFormat, MermaidEditorFormat];
+export interface QuillMermaidOptions {
+  editor: Partial<MerMaidEditorOptions>;
+  histroyStackOptions: Partial<HistroyInputOptions>;
+}
 
-MermaidEditorFormat.allowedChildren = [CodeBlockContainer];
-MermaidEditorFormat.defaultChild = CodeBlockContainer;
-
-const Delta = Quill.import('delta');
 export class QuillMermaid {
-  static keyboradHandler = {
-    'code not exit': {
-      bindInHead: true,
-      key: 'Enter',
-      collapsed: true,
-      format: ['mermaid-code-block'],
-      prefix: /^$/,
-      suffix: /^\s*$/,
-      handler(this: { quill: Quill }, range: Range, context: Context) {
-        if (context.line.parent.parent instanceof MermaidEditorFormat) {
-          const [line, offset] = this.quill.getLine(range.index);
-          const delta = new Delta()
-            .retain(range.index + line!.length() - offset - 2)
-            .insert('\n', { 'mermaid-code-block': 'plain' });
-          this.quill.updateContents(delta, Quill.sources.USER);
-          this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
-          return false;
-        }
-        return true;
-      },
-    },
-  };
-
   static register() {
     const icons = Quill.import('ui/icons') as Record<string, string>;
     icons[MermaidChartFormat.blotName] = mermaidSvg;
@@ -49,26 +21,17 @@ export class QuillMermaid {
     }, true);
   }
 
-  mermaidBlot?: MermaidContainerFormat;
+  mermaidBlot?: MermaidChartFormat;
   mermaidSelector?: MermaidSelector;
-  constructor(public quill: Quill) {
+  options: QuillMermaidOptions;
+  constructor(public quill: Quill, options?: Partial<QuillMermaidOptions>) {
+    this.options = this.resolveOptions(options);
     const toolbar = this.quill.getModule('toolbar') as TypeToolbar;
     if (toolbar) {
       toolbar.addHandler(MermaidChartFormat.blotName, () => {
         const range = this.quill.getSelection(true);
         this.quill.insertEmbed(range.index, MermaidChartFormat.blotName, '');
       });
-    }
-
-    const keyboard = this.quill.getModule('keyboard') as TypeKeyboard;
-    for (const handle of Object.values(QuillMermaid.keyboradHandler)) {
-      // insert before default key handler
-      if (handle.bindInHead) {
-        keyboard.bindings[handle.key].unshift(handle);
-      }
-      else {
-        keyboard.addBinding(handle.key, handle);
-      }
     }
 
     this.quill.root.addEventListener(
@@ -80,10 +43,10 @@ export class QuillMermaid {
 
         const chartNode = path.find((node) => {
           const blot = Quill.find(node);
-          return blot instanceof MermaidContainerFormat;
+          return blot instanceof MermaidChartFormat;
         });
         if (chartNode) {
-          const mermaidBlot = Quill.find(chartNode) as MermaidContainerFormat;
+          const mermaidBlot = Quill.find(chartNode) as MermaidChartFormat;
           if (this.mermaidBlot === mermaidBlot) {
             return;
           }
@@ -95,12 +58,16 @@ export class QuillMermaid {
       },
       false,
     );
-    // this.quill.on(Quill.events.TEXT_CHANGE, () => {
-    //   this.destroyMermaidSelector();
-    // });
   }
 
-  updateMermaidSelector(mermaidBlot: MermaidContainerFormat) {
+  resolveOptions(options: Partial<QuillMermaidOptions> = {}): QuillMermaidOptions {
+    return Object.assign({
+      editor: {},
+      histroyStackOptions: {},
+    }, options);
+  }
+
+  updateMermaidSelector(mermaidBlot: MermaidChartFormat) {
     if (this.mermaidSelector) {
       this.destroyMermaidSelector();
     }
@@ -108,7 +75,8 @@ export class QuillMermaid {
       this.mermaidBlot = mermaidBlot;
       this.mermaidSelector = new MermaidSelector(this.quill, this.mermaidBlot, {
         onDestroy: () => this.destroyMermaidSelector(),
-      });
+        editorOptions: this.options.editor,
+      }, this.options.histroyStackOptions);
     }
   }
 
