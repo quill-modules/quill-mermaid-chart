@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-number-properties */
 import { toBase64 } from 'js-base64';
 
 const getBase64SVG = (svg: HTMLElement, width?: number, height?: number): string => {
@@ -28,10 +27,10 @@ export const svgStringToBase64 = (text: string): string => {
   }
   let width = Number(svg.getAttribute('width'));
   let height = Number(svg.getAttribute('height'));
-  if (isNaN(width)) {
+  if (Number.isNaN(width)) {
     width = 0;
   }
-  if (isNaN(height)) {
+  if (Number.isNaN(height)) {
     height = 0;
   }
   canvas.width = width;
