@@ -1,4 +1,6 @@
 import closeSvg from '../svg/close.svg';
+import { handleIfTransitionend } from './functions';
+import { ensureArray } from './types';
 
 export const createLoading = (target: HTMLElement) => {
   const mask = document.createElement('div');
@@ -16,7 +18,7 @@ export const createLoading = (target: HTMLElement) => {
 };
 
 export interface DialogOptions {
-  content?: HTMLElement;
+  content?: HTMLElement | HTMLElement[];
   appendTo?: HTMLElement;
   title?: string;
   description?: string;
@@ -46,16 +48,42 @@ export const createDialog = (options?: DialogOptions) => {
   const dialog = document.createElement('div');
   dialog.classList.add('qmc-dialog');
 
+  let originWidth = '';
+  let originHeight = '';
+  const handleReisze = () => {
+    const rect = dialog.getBoundingClientRect();
+    if (rect.width > window.innerWidth) {
+      if (!originWidth) {
+        originWidth = dialog.style.maxWidth;
+      }
+      dialog.style.maxWidth = `${window.innerWidth}px`;
+    }
+    else if (originWidth) {
+      dialog.style.maxWidth = originWidth;
+      originWidth = '';
+    }
+    if (rect.height > window.innerHeight) {
+      if (!originHeight) {
+        originHeight = dialog.style.maxHeight;
+      }
+      dialog.style.maxHeight = `${window.innerHeight}px`;
+    }
+    else if (originHeight) {
+      dialog.style.maxHeight = originHeight;
+      originHeight = '';
+    }
+  };
   const close = () => {
     for (const item of [mask, dialog]) {
       item.classList.remove('open');
       item.classList.add('close');
-      item.addEventListener('transitionend', () => {
+      handleIfTransitionend(item, 300, () => {
         item.remove();
       }, { once: true });
     }
     // eslint-disable-next-line ts/no-use-before-define
     document.removeEventListener('keydown', keyboardClose);
+    window.removeEventListener('resize', handleReisze);
     if (onClose) {
       onClose();
     }
@@ -66,7 +94,8 @@ export const createDialog = (options?: DialogOptions) => {
     setTimeout(() => {
       mask.classList.add('open');
       dialog.classList.add('open');
-      dialog.addEventListener('transitionend', () => {
+      window.addEventListener('resize', handleReisze);
+      handleIfTransitionend(dialog, 300, () => {
         if (onShow) {
           onShow();
         }
@@ -95,7 +124,9 @@ export const createDialog = (options?: DialogOptions) => {
   if (content) {
     const contentEl = document.createElement('div');
     contentEl.classList.add('qmc-dialog-content');
-    contentEl.appendChild(content);
+    for (const el of ensureArray(content)) {
+      contentEl.appendChild(el);
+    }
     dialog.appendChild(contentEl);
   }
 

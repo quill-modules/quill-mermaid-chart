@@ -39,6 +39,7 @@
   @include setCssVar(cancel-text-color, rgba(24, 24, 27, 1));
   @include setCssVar(cancel-text-color-hover, rgba(24, 24, 27, 1));
 
+  box-sizing: border-box;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -106,6 +107,7 @@
     flex-direction: column;
     gap: 16px;
     padding: 16px 0px;
+    overflow: auto;
   }
   &-footer {
     display: flex;
