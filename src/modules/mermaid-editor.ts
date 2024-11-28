@@ -1,7 +1,7 @@
 import type { MermaidChartFormat } from '@/formats';
 import type Quill from 'quill';
 import type { EditorInputElement, HistroyInputOptions } from './history-input';
-import { createDialog, debounce, renderMermaidInNode, SHORTKEY } from '@/utils';
+import { chartTemplate, createDialog, debounce, renderMermaidInNode, SHORTKEY } from '@/utils';
 import { HistroyInput } from './history-input';
 
 export interface MerMaidEditorOptions {
@@ -11,7 +11,6 @@ export interface MerMaidEditorOptions {
 export class MermaidEditor {
   closeEditor: () => void;
   options: MerMaidEditorOptions;
-  editor!: HTMLElement;
   preview!: HTMLElement;
   chart!: HTMLElement;
   textInput!: HistroyInput;
@@ -84,23 +83,51 @@ export class MermaidEditor {
   }
 
   createEditor() {
-    this.editor = document.createElement('div');
-    this.editor.classList.add('qmc-mermaid-editor');
+    const header = document.createElement('div');
+    header.classList.add('qmc-mermaid__editor-header');
+    const template = document.createElement('select');
+    template.classList.add('qmc-mermaid__editor-template');
+    const option = document.createElement('option');
+    option.textContent = 'Template';
+    option.setAttribute('hidden', 'true');
+    option.setAttribute('selected', 'true');
+    template.appendChild(option);
+    template.setAttribute('placeholder', 'Template');
+    for (const [key, value] of Object.entries(chartTemplate)) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = key;
+      template.appendChild(option);
+    }
+    template.addEventListener('change', (e) => {
+      const target = e.target as HTMLSelectElement;
+      const value = target.value;
+      if (value) {
+        this.textInput.record(this.textInput.el.value, [this.textInput.el.selectionStart, this.textInput.el.selectionEnd]);
+        this.textInput.el.value = value;
+        this.updatePreview();
+      }
+      target.selectedIndex = 0;
+    });
+    header.appendChild(template);
+
+    const editor = document.createElement('div');
+    editor.classList.add('qmc-mermaid__editor');
     const textInputBox = document.createElement('div');
-    textInputBox.classList.add('qmc-mermaid-input');
+    textInputBox.classList.add('qmc-mermaid__editor-input');
     this.textInput = new HistroyInput(document.createElement('textarea'), this.histroyStackOptions);
-    this.textInput.el.classList.add('qmc-mermaid-input-content');
+    this.textInput.el.classList.add('qmc-mermaid__editor-input-content');
     this.textInput.el.value = this.mermaidBlot.text;
     this.bindInputEvent();
     textInputBox.appendChild(this.textInput.el);
     this.preview = document.createElement('div');
-    this.preview.classList.add('qmc-mermaid-preview');
+    this.preview.classList.add('qmc-mermaid__editor-preview');
     this.chart = document.createElement('div');
-    this.chart.classList.add('qmc-mermaid-preview-chart');
+    this.chart.classList.add('qmc-mermaid__editor-preview-chart');
     this.preview.appendChild(this.chart);
-    this.editor.appendChild(textInputBox);
-    this.editor.appendChild(this.preview);
-    this.editor.style.height = `${Math.min(600, window.innerHeight * 0.5)}px`;
-    return this.editor;
+    editor.appendChild(textInputBox);
+    editor.appendChild(this.preview);
+    editor.style.height = `${Math.min(600, window.innerHeight * 0.7)}px`;
+    return [header, editor];
   }
 }
