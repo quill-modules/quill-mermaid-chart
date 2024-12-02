@@ -64,6 +64,7 @@
   --qmc-cancel-bg-color-hover: rgb(244, 244, 245);
   --qmc-cancel-text-color: rgb(24, 24, 27);
   --qmc-cancel-text-color-hover: rgb(24, 24, 27);
+  box-sizing: border-box;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -132,6 +133,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 16px 0px;
+  overflow: auto;
 }
 .qmc-dialog-footer {
   display: flex;
@@ -272,16 +274,21 @@
   cursor: pointer;
 }
 
-.qmc-mermaid-editor {
+.qmc-mermaid__editor {
   display: flex;
   height: 600px;
   border: 1px solid #e5e7eb;
 }
-.qmc-mermaid-input, .qmc-mermaid-preview {
+.qmc-mermaid__editor-template {
+  padding: 2px 6px;
+  outline: none;
+  border-radius: 4px;
+}
+.qmc-mermaid__editor-input, .qmc-mermaid__editor-preview {
   width: 50%;
   overflow: auto;
 }
-.qmc-mermaid-input-content {
+.qmc-mermaid__editor-input-content {
   box-sizing: border-box;
   display: block;
   width: 100%;
@@ -292,12 +299,12 @@
   border: none;
   resize: none;
 }
-.qmc-mermaid-preview {
+.qmc-mermaid__editor-preview {
   position: relative;
   display: flex;
   padding: 16px;
   border-left: 1px solid #e5e7eb;
 }
-.qmc-mermaid-preview-chart {
+.qmc-mermaid__editor-preview-chart {
   margin: auto;
 }
