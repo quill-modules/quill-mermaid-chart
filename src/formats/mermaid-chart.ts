@@ -12,7 +12,7 @@ export class MermaidChartFormat extends BlockEmbed {
   static className = 'ql-mermaid-chart';
 
   static create(value: string) {
-    if (!value) value = chartTemplate.flowchart;
+    if (!value) value = chartTemplate[(Object.keys(chartTemplate) as (keyof typeof chartTemplate)[])[0]];
     const node = super.create() as MermaidChartNode;
     node.setAttribute('contenteditable', 'false');
     node[mermaidDataKey] = value;

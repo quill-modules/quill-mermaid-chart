@@ -11,3 +11,11 @@ export function debounce<T extends (...args: any[]) => void>(func: T, wait: numb
     }, wait);
   };
 }
+
+export const handleIfTransitionend = (domNode: HTMLElement, duration: number, handler: () => void, options?: boolean | AddEventListenerOptions) => {
+  domNode.addEventListener('transitionend', handler, options);
+  // handle remove when transition set none
+  setTimeout(() => {
+    handler();
+  }, duration);
+};

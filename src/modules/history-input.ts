@@ -2,6 +2,7 @@ import { historyStackKey } from '@/utils';
 
 export interface HistroyInputOptions {
   maxStack: number;
+  delay: number;
 }
 export interface HistroyStackItem {
   value: string;
@@ -16,6 +17,7 @@ export type EditorInputElement = HTMLTextAreaElement & { [historyStackKey]: Hist
 export class HistroyInput {
   el: EditorInputElement;
   options: HistroyInputOptions;
+  lastRecorded: number = 0;
   constructor(el: HTMLTextAreaElement & { [historyStackKey]?: HistroyStack }, options?: Partial<HistroyInputOptions>) {
     this.options = this.resolveOptions(options);
     el[historyStackKey] = {
@@ -25,7 +27,20 @@ export class HistroyInput {
     this.el = el as EditorInputElement;
     this.el.addEventListener('beforeinput', (e) => {
       if (e.isComposing) return;
-      this.record(this.el.value, [this.el.selectionStart, this.el.selectionEnd]);
+      let undoValue = this.el.value;
+      let undoRange: [number, number] = [this.el.selectionStart, this.el.selectionEnd];
+      const timestamp = Date.now();
+      if (this.lastRecorded + this.options.delay > timestamp && this.el[historyStackKey].undo.length > 0) {
+        const item = this.el[historyStackKey].undo.pop();
+        if (item) {
+          undoValue = item.value;
+          undoRange = item.range;
+        }
+      }
+      else {
+        this.lastRecorded = timestamp;
+      }
+      this.record(undoValue, undoRange);
     });
     let compositionStartItem: HistroyStackItem = {
       value: '',
@@ -42,6 +57,7 @@ export class HistroyInput {
   resolveOptions(options: Partial<HistroyInputOptions> = {}): HistroyInputOptions {
     return Object.assign({
       maxStack: 100,
+      delay: 1000,
     }, options);
   }
 
