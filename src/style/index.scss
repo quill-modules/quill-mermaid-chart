@@ -1,10 +1,9 @@
 @use './func.scss' as *;
 @use './loading.scss' as *;
-@use './dialog.scss' as *;
 
 $border-radius: 8px;
-.#{$namespace} {
-  &-toolbox {
+.#{$moduleNamespace}-mermaid {
+  &__toolbox {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -16,135 +15,163 @@ $border-radius: 8px;
       pointer-events: all;
     }
   }
-  &-container &-mermaid {
-    &-chart {
-      @include setCssVar(editor-border-color, #414141);
+  &__select {
+    @include setCssVar(text-color, #171717);
+    @include setCssVar(border-color, #5192b1);
+    @include setCssVar(bg-color, #f4f4f5);
+    @include setCssVar(tip-bg-color, #424242);
+    @include setCssVar(tip-text-color, #ffffff);
 
-      position: relative;
-      display: flex;
-      justify-content: center;
-      max-width: 80%;
-      min-height: 40px;
-      margin: auto;
-      overflow: auto;
-      .chart {
-        flex-shrink: 0;
-        display: flex;
-        justify-content: center;
-        width: 100%;
-      }
-    }
-    &-select {
-      @include setCssVar(text-color, #171717);
-      @include setCssVar(border-color, #7dd3fc);
-      @include setCssVar(bg-color, #f4f4f5);
-      @include setCssVar(tip-bg-color, #424242);
-      @include setCssVar(tip-text-color, #ffffff);
-
-      position: absolute;
-      border: 2px dashed getCssVar(border-color);
-      border-radius: $border-radius;
-      pointer-events: none;
-      &-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        right: -14px;
-        z-index: 10;
-        width: 28px;
-        height: 28px;
-        border: none;
-        border-radius: 50%;
-        background-color: getCssVar(bg-color);
-        color: getCssVar(text-color);
-        font-size: 20px;
-        cursor: pointer;
-        transition-duration: 0.3s;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.11);
-        &:hover {
-          @include setCssVar(text-color, #fafafa);
-          @include setCssVar(bg-color, #38bdf8);
-          &::after {
-            display: flex;
-          }
-        }
-        &::after {
-          position: absolute;
-          content: '';
-          display: none;
-          align-items: center;
-          justify-content: center;
-          height: 24px;
-          padding: 0px 10px;
-          border-radius: 4px;
-          color: getCssVar(tip-text-color);
-          background-color: getCssVar(tip-bg-color);
-          font-size: 14px;
-          transform: translateX(calc(-50% - 20px));
-        }
-      }
-      &-close {
-        top: -14px;
-        &::after {
-          content: 'remove';
-        }
-      }
-      &-edit {
-        top: 18px;
-        &::after {
-          content: 'edit';
-        }
-      }
-    }
-    &-icon {
+    position: absolute;
+    border: 2px dashed getCssVar(border-color);
+    pointer-events: none;
+    &-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      color: currentColor;
+      position: absolute;
+      right: -14px;
+      z-index: 10;
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 50%;
+      background-color: getCssVar(bg-color);
+      color: getCssVar(text-color);
+      font-size: 20px;
       cursor: pointer;
+      transition-duration: 0.3s;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.11);
+      &:hover {
+        @include setCssVar(text-color, #fafafa);
+        @include setCssVar(bg-color, #38bdf8);
+        &::after {
+          display: flex;
+        }
+      }
+      &::after {
+        position: absolute;
+        content: '';
+        display: none;
+        align-items: center;
+        justify-content: center;
+        height: 24px;
+        padding: 0px 10px;
+        border-radius: 4px;
+        color: getCssVar(tip-text-color);
+        background-color: getCssVar(tip-bg-color);
+        font-size: 14px;
+        transform: translateX(calc(-50% - 20px));
+      }
     }
-  }
-}
-
-.#{$moduleNamespace}-mermaid {
-  &__editor {
-    display: flex;
-    height: 600px;
-    border: 1px solid #e5e7eb;
-
+    &-close {
+      top: -14px;
+      &::after {
+        content: 'remove';
+      }
+    }
+    &-edit {
+      top: 18px;
+      &::after {
+        content: 'edit';
+      }
+    }
+    &-header {
+      display: inline-flex;
+      height: 24px;
+      transform: translateY(-12px);
+      &.is-hidden {
+        display: none;
+      }
+    }
     &-template {
-      padding: 2px 6px;
-      outline: none;
-      border-radius: 4px;
+      width: 128px;
+      height: 100%;
     }
+  }
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
+    cursor: pointer;
+  }
+  &__chart {
+    @include setCssVar(editor-border-color, #414141);
 
-    &-input,
-    &-preview {
-      width: 50%;
-      overflow: auto;
-    }
-    &-input {
-      &-content {
-        box-sizing: border-box;
-        display: block;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 16px;
-        outline: none;
-        border: none;
-        resize: none;
-      }
-    }
-    &-preview {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    max-width: 80%;
+    min-height: 40px;
+    margin: auto;
+    overflow: auto;
+    &-box {
       position: relative;
+      flex-shrink: 0;
+      flex: 1;
       display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+  }
+  &__editor {
+    flex: 1;
+    background-color: #171717;
+    &-input {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      max-height: 100%;
+      margin: 0;
       padding: 16px;
-      border-left: 1px solid #e5e7eb;
-      &-chart {
-        margin: auto;
-      }
+      outline: none;
+      border: none;
+      resize: none;
+      color: #f4f4f5;
+      background-color: #171717;
     }
   }
 }
+
+// .#{$moduleNamespace}-mermaid {
+//   &__editor {
+//     display: flex;
+//     height: 600px;
+//     border: 1px solid #e5e7eb;
+
+//     &-template {
+//       padding: 2px 6px;
+//       outline: none;
+//       border-radius: 4px;
+//     }
+
+//     &-input,
+//     &-preview {
+//       width: 50%;
+//       overflow: auto;
+//     }
+//     &-input {
+//       &-content {
+//         box-sizing: border-box;
+//         display: block;
+//         width: 100%;
+//         height: 100%;
+//         margin: 0;
+//         padding: 16px;
+//         outline: none;
+//         border: none;
+//         resize: none;
+//       }
+//     }
+//     &-preview {
+//       position: relative;
+//       display: flex;
+//       padding: 16px;
+//       border-left: 1px solid #e5e7eb;
+//       &-chart {
+//         margin: auto;
+//       }
+//     }
+//   }
+// }

@@ -1,51 +1,46 @@
-import type { MermaidChartFormat } from '@/formats';
+import type { MermaidChartFormat, MermaidChartMode } from '@/formats';
 import type Quill from 'quill';
 import type { HistroyInputOptions } from './history-input';
-import type { MerMaidEditorOptions } from './mermaid-editor';
-import { addScrollEvent, clearScrollEvent, events } from '@/utils';
+import { addScrollEvent, bem, chartTemplate, clearScrollEvent, events } from '@/utils';
 import closeSvg from '../svg/close.svg';
 import editSvg from '../svg/edit.svg';
-import { MermaidEditor } from './mermaid-editor';
 
-export interface MermaidSelectorOptions {
+interface MermaidSelectorOptions {
   onDestroy: () => void;
-  editorOptions: Partial<MerMaidEditorOptions>;
 }
 export class MermaidSelector {
   #internalDestroy: boolean = false;
-  options: MermaidSelectorOptions;
   scrollHandler: [HTMLElement, (e: Event) => void][] = [];
-  toolbox?: HTMLElement;
-  selector?: HTMLDivElement;
+  options: MermaidSelectorOptions;
+  root: HTMLElement | null = null;
+  selector?: HTMLElement;
   resizeOb?: ResizeObserver;
-  editor?: MermaidEditor;
   histroyStackOptions?: Partial<HistroyInputOptions>;
-  constructor(public quill: Quill, public mermaidBlot: MermaidChartFormat, options?: Partial<MermaidSelectorOptions>, histroyStackOptions?: Partial<HistroyInputOptions>) {
+  constructor(public quill: Quill, public mermaidBlot: MermaidChartFormat, options: Partial<MermaidSelectorOptions>, histroyStackOptions?: Partial<HistroyInputOptions>) {
     this.options = this.resolveOptions(options);
     this.histroyStackOptions = histroyStackOptions;
 
-    this.toolbox = this.quill.addContainer('ql-toolbox');
+    this.root = this.quill.addContainer(bem.be('toolbox'));
     this.createSelector();
   }
 
   resolveOptions(options?: Partial<MermaidSelectorOptions>) {
     return Object.assign({
       onDestroy: () => {},
-      editorOptions: {},
     }, options);
   }
 
   addContainer(classes: string) {
-    if (!this.toolbox) return;
+    if (!this.root) return;
     const el = document.createElement('div');
     for (const classname of classes.split(' ')) {
       el.classList.add(classname);
     }
-    this.toolbox.appendChild(el);
+    this.root.appendChild(el);
     return el;
   }
 
-  updateSelector() {
+  update() {
     if (!this.selector) return;
     const mermaidNode = this.mermaidBlot.domNode;
     const mermaidRect = mermaidNode.getBoundingClientRect();
@@ -59,47 +54,83 @@ export class MermaidSelector {
     });
     clearScrollEvent.call(this);
     addScrollEvent.call(this, this.quill.root, () => {
-      Object.assign(this.selector!.style, {
+      if (!this.selector) return;
+      Object.assign(this.selector.style, {
         left: `${x + scrollLeft * 2 - this.quill.root.scrollLeft}px`,
         top: `${y + scrollTop * 2 - this.quill.root.scrollTop}px`,
       });
     });
+
+    const header = this.selector.querySelector(`.${bem.be('select-header')}`);
+    console.log(header);
+    if (header) {
+      header.classList.remove(bem.is('hidden'));
+      if (this.mermaidBlot.mode !== 'edit') {
+        header.classList.add(bem.is('hidden'));
+      }
+    }
   }
 
   createSelector() {
-    this.selector = this.addContainer('ql-mermaid-select');
+    this.selector = this.addContainer(bem.be('select'));
     if (!this.selector) return;
-    this.updateSelector();
-    this.resizeOb = new ResizeObserver(() => {
-      this.updateSelector();
+
+    const header = document.createElement('div');
+    header.classList.add(bem.be('select-header'));
+    if (this.mermaidBlot.mode !== 'edit') {
+      header.classList.add(bem.is('hidden'));
+    }
+    const template = document.createElement('select');
+    template.classList.add(bem.be('select-template'));
+    const option = document.createElement('option');
+    option.textContent = 'Template';
+    option.setAttribute('hidden', 'true');
+    option.setAttribute('selected', 'true');
+    template.appendChild(option);
+    template.setAttribute('placeholder', 'Template');
+    for (const [key, value] of Object.entries(chartTemplate)) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = key;
+      template.appendChild(option);
+    }
+    template.addEventListener('change', (e) => {
+      const target = e.target as HTMLSelectElement;
+      const value = target.value;
+      if (value) {
+        if (!this.mermaidBlot.textInput) return;
+        this.mermaidBlot.textInput.record(this.mermaidBlot.textInput.el.value, [this.mermaidBlot.textInput.el.selectionStart, this.mermaidBlot.textInput.el.selectionEnd]);
+        this.mermaidBlot.textInput.el.value = value;
+        this.mermaidBlot.updatePreview(value);
+      }
+      target.selectedIndex = 0;
     });
-    this.resizeOb.observe(this.mermaidBlot.domNode);
+    header.appendChild(template);
+    this.selector.appendChild(header);
 
     const editBtn = createBtnIcon({
       iconStr: editSvg,
-      classList: ['ql-mermaid-select-edit'],
+      classList: [bem.be('select-edit')],
       click: () => {
-        this.editor = new MermaidEditor(this.quill, this.mermaidBlot, {
-          ...this.options.editorOptions,
-          onClose: () => {
-            this.editor = undefined;
-            if (this.options.editorOptions.onClose) {
-              this.options.editorOptions.onClose();
-            }
-          },
-        }, this.histroyStackOptions);
+        if (this.mermaidBlot.mode === 'chart') {
+          this.mermaidBlot.changeMode('edit');
+        }
+        else {
+          this.mermaidBlot.changeMode('chart');
+        }
+        this.update();
       },
     });
     const removeBtn = createBtnIcon({
       iconStr: closeSvg,
-      classList: ['ql-mermaid-select-close'],
+      classList: [bem.be('select-close')],
       click: () => {
         this.mermaidBlot.remove();
         this.#internalDestroy = true;
         this.destroy();
       },
     });
-    this.quill.on(events.mermaidModeChange, (mode: 'chart' | 'edit') => {
+    this.quill.on(events.mermaidModeChange, (mode: MermaidChartMode) => {
       if (this.selector) {
         this.selector.classList.add(mode);
       }
@@ -107,6 +138,12 @@ export class MermaidSelector {
 
     this.selector.appendChild(removeBtn);
     this.selector.appendChild(editBtn);
+
+    this.update();
+    this.resizeOb = new ResizeObserver(() => {
+      this.update();
+    });
+    this.resizeOb.observe(this.mermaidBlot.domNode);
   }
 
   destroy() {
@@ -115,20 +152,17 @@ export class MermaidSelector {
     if (this.resizeOb) {
       this.resizeOb.disconnect();
     }
-    if (this.toolbox) {
-      this.toolbox.remove();
-      this.toolbox = undefined;
+    if (this.root) {
+      this.root.remove();
     }
     if (this.#internalDestroy) {
       this.#internalDestroy = false;
-      this.options.onDestroy();
     }
   }
 }
 
-export function getRelativeRect(targetRect: DOMRect, container: HTMLElement) {
+function getRelativeRect(targetRect: DOMRect, container: HTMLElement) {
   const containerRect = container.getBoundingClientRect();
-
   return {
     x: targetRect.x - containerRect.x - container.scrollLeft,
     y: targetRect.y - containerRect.y - container.scrollTop,
@@ -146,9 +180,9 @@ function createBtnIcon(options: {
 }) {
   const { iconStr, classList, click } = options;
   const btn = document.createElement('span');
-  btn.classList.add('ql-mermaid-select-btn', ...classList);
+  btn.classList.add(bem.be('select-btn'), ...classList);
   const icon = document.createElement('i');
-  icon.classList.add('ql-mermaid-icon');
+  icon.classList.add(bem.be('icon'));
   icon.innerHTML = iconStr;
   btn.appendChild(icon);
   btn.addEventListener('click', click);
