@@ -5,8 +5,10 @@ import { addScrollEvent, bem, chartTemplate, clearScrollEvent, events } from '@/
 import closeSvg from '../svg/close.svg';
 import editSvg from '../svg/edit.svg';
 
-interface MermaidSelectorOptions {
+export interface MermaidSelectorOptions {
   onDestroy: () => void;
+  onRemove: (blot: MermaidChartFormat) => Promise<boolean> | boolean;
+  onEdit: (blot: MermaidChartFormat, isEnter: boolean) => void;
 }
 export class MermaidSelector {
   #internalDestroy: boolean = false;
@@ -27,6 +29,8 @@ export class MermaidSelector {
   resolveOptions(options?: Partial<MermaidSelectorOptions>) {
     return Object.assign({
       onDestroy: () => {},
+      onRemove: () => false,
+      onEdit: () => {},
     }, options);
   }
 
@@ -125,13 +129,15 @@ export class MermaidSelector {
         else {
           this.mermaidBlot.changeMode('chart');
         }
+        this.options.onEdit(this.mermaidBlot, this.mermaidBlot.mode === 'edit');
         this.update();
       },
     });
     const removeBtn = createBtnIcon({
       iconStr: closeSvg,
       classList: [bem.be('select-close')],
-      click: () => {
+      click: async () => {
+        if (await this.options.onRemove(this.mermaidBlot)) return;
         this.mermaidBlot.remove();
         this.#internalDestroy = true;
         this.destroy();

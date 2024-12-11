@@ -1,3 +1,4 @@
+import type { MermaidSelectorOptions } from '@/modules';
 import type TypeToolbar from 'quill/modules/toolbar';
 import type { HistroyInputOptions } from './modules/history-input';
 import { MermaidChartFormat } from '@/formats';
@@ -7,6 +8,7 @@ import mermaidSvg from './svg/mermaid.svg';
 
 export interface QuillMermaidOptions {
   histroyStackOptions: Partial<HistroyInputOptions>;
+  selectorOptions: Partial<MermaidSelectorOptions>;
 }
 
 export class QuillMermaid {
@@ -60,7 +62,7 @@ export class QuillMermaid {
 
   resolveOptions(options: Partial<QuillMermaidOptions> = {}): QuillMermaidOptions {
     return Object.assign({
-      editor: {},
+      selectorOptions: {},
       histroyStackOptions: {},
     }, options);
   }
@@ -72,6 +74,7 @@ export class QuillMermaid {
     if (mermaidBlot) {
       this.mermaidBlot = mermaidBlot;
       this.mermaidSelector = new MermaidSelector(this.quill, this.mermaidBlot, {
+        ...this.options.selectorOptions,
         onDestroy: () => this.destroyMermaidSelector(),
       }, this.options.histroyStackOptions);
     }

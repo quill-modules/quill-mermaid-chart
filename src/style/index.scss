@@ -79,7 +79,7 @@ $border-radius: 8px;
       }
       &.is-edit {
         &::after {
-          content: 'save';
+          content: 'exit';
         }
       }
     }
