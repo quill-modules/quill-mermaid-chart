@@ -16,7 +16,7 @@ const getBase64SVG = (svg: HTMLElement, width?: number, height?: number): string
 
   return toBase64(`${svgString}`);
 };
-export const svgStringToBase64 = (text: string): string => {
+export const svgStringToBase64 = (text: string) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(text, 'text/html');
   const canvas: HTMLCanvasElement = document.createElement('canvas');
@@ -42,5 +42,9 @@ export const svgStringToBase64 = (text: string): string => {
   context.fillStyle = `hsl(${window.getComputedStyle(document.body).getPropertyValue('--b1')})`;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  return `data:image/svg+xml;base64,${getBase64SVG(svg, canvas.width, canvas.height)}`;
+  return {
+    url: `data:image/svg+xml;base64,${getBase64SVG(svg, canvas.width, canvas.height)}`,
+    width,
+    height,
+  };
 };

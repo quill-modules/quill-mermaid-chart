@@ -1,15 +1,11 @@
-export const events = {
-  mermaidModeChange: 'mermaid-mode-change',
-  mermaidTextChange: 'mermaid-text-change',
-};
 export const mermaidDataKey = Symbol('mermaid-data');
 export const chartTemplate = {
-  'Flowchart': `graph LR
-  A[Start] --> B{Is it?};
-  B -->|Yes| C[OK];
-  C --> D[Rethink];
-  D --> B;
-  B ---->|No| E[End];`,
+  'Flowchart': `flowchart TD
+    A[Start] --> B{Is it?}
+    B -->|Yes| C[OK]
+    C --> D[Rethink]
+    D --> B
+    B ---->|No| E[End]`,
   'Sequence Diagrams': `sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!

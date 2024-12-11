@@ -12,6 +12,7 @@ Makesure mermaid is loaded on window
 
 ```js
 import QuillMermaid from 'quill-mermaid';
+import 'quill-mermaid/dist/index.css';
 
 Quill.register({
   'modules/mermaid': QuillMermaid,
@@ -21,31 +22,19 @@ const quill = new Quill('#editor', {
   theme: 'snow',
   modules: {
     toolbar: [
-      ['bold', 'italic', 'underline', 'strike'],
-      ['blockquote', 'code-block', 'code'],
-      ['link', 'image', 'video', 'formula'],
-      [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
-      [{ script: 'sub' }, { script: 'super' }],
-      [{ indent: '-1' }, { indent: '+1' }],
-      [{ direction: 'rtl' }],
-      [{ size: ['small', false, 'large', 'huge'] }],
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      [{ color: [] }, { background: [] }],
-      [{ font: [] }],
-      [{ align: [] }],
-      ['clean'],
+      // ...
       // add mermaid chart button
       ['mermaid-chart'],
     ],
     mermaid: {
-      editor: {
-        dialogMaskClickClose: false,
-        onClose() {
-          console.log('dialog close');
-        },
+      selectorOptions: {
+        onDestroy() {},
+        onRemove(blot) {},
+        onEdit(blot, isEnter) {},
       },
       histroyStackOptions: {
-        maxStack: 10,
+        maxStack: 100,
+        delay: 1000
       },
     }
   },
@@ -54,8 +43,10 @@ const quill = new Quill('#editor', {
 
 ## Options
 
-| attribute                    | description                                           | type         | default |
-| ---------------------------- | ----------------------------------------------------- | ------------ | ------- |
-| editor.dialogMaskClickClose  | whether the dialog can be closed by clicking the mask | `boolean`    | `true`  |
-| editor.onClose               | triggers when the dialog closed                       | `() => void` | -       |
-| histroyStackOptions.maxStack | max record mermaid editor history                     | `number`     | `100`   |
+| attribute                    | description                                                                                       | type                                    | default |
+| ---------------------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------- | ------- |
+| selectorOptions.onDestroy    | trigger when selector destroy                                                                     | `() => void`                            | -       |
+| selectorOptions.onRemove     | trigger when selector click remove button. if it returns `true`, the chart it will not be removed | `(blot: MermaidChartFormat) => boolean` | -       |
+| selectorOptions.onEdit       | trigger when selector click edit button                                                           | `() => void`                            | -       |
+| histroyStackOptions.maxStack | max record mermaid editor history                                                                 | `number`                                | `100`   |
+| histroyStackOptions.delay    | record input value the time interval each time(ms)                                                | `number`                                | `1000`  |
