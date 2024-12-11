@@ -62,11 +62,18 @@ export class MermaidSelector {
     });
 
     const header = this.selector.querySelector(`.${bem.be('select-header')}`);
-    console.log(header);
     if (header) {
       header.classList.remove(bem.is('hidden'));
       if (this.mermaidBlot.mode !== 'edit') {
         header.classList.add(bem.is('hidden'));
+      }
+    }
+
+    const editBtn = this.selector.querySelector(`.${bem.be('select-edit')}`);
+    if (editBtn) {
+      editBtn.classList.remove(bem.is('edit'));
+      if (this.mermaidBlot.mode === 'edit') {
+        editBtn.classList.add(bem.is('edit'));
       }
     }
   }

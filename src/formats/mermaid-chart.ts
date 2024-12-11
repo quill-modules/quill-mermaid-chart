@@ -1,8 +1,7 @@
 import type { EditorInputElement } from '@/modules/history-input';
 import type { BlockEmbed as TypeBlockEmbed } from 'quill/blots/block';
 import { HistroyInput } from '@/modules/history-input';
-import { bem, chartTemplate, debounce, mermaidDataKey, randomId, renderMermaidInNode, SHORTKEY } from '@/utils';
-import { calcTextareaHeight } from '@/utils/input';
+import { bem, calcTextareaHeight, chartTemplate, debounce, mermaidDataKey, randomId, renderMermaidInNode, SHORTKEY } from '@/utils';
 import Quill from 'quill';
 
 const BlockEmbed = Quill.import('blots/block/embed') as typeof TypeBlockEmbed;
@@ -55,10 +54,11 @@ export class MermaidChartFormat extends BlockEmbed {
     const renderPreview = debounce(() => {
       this.updatePreview(textInput.el.value);
       this.calculateHeight();
-
+      // TODO: quill internal change selection range?
       textInput.el.blur();
       setTimeout(() => textInput.el.focus());
     }, 500);
+
     textInput.el.addEventListener('keydown', async (e) => {
       e.stopPropagation();
       let isNeedUpdate = false;
@@ -68,7 +68,6 @@ export class MermaidChartFormat extends BlockEmbed {
         const input = e.target! as EditorInputElement;
         input.value = `${input.value.slice(0, selectionStart)}  ${input.value.slice(selectionEnd)}`;
         input.setSelectionRange(selectionStart + 2, selectionStart + 2);
-        console.log(selectionStart);
         isNeedUpdate = true;
       }
       if (e[SHORTKEY] && e.code === 'KeyZ') {
@@ -95,7 +94,7 @@ export class MermaidChartFormat extends BlockEmbed {
     textInput.el.addEventListener('paste', e => e.stopPropagation());
   }
 
-  createEditor() {
+  private createEditor() {
     if (this.getEditor()) return;
     const editor = document.createElement('div');
     editor.classList.add(bem.be('editor'));
