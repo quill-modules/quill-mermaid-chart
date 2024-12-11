@@ -126,8 +126,12 @@ $border-radius: 8px;
       flex-shrink: 0;
       flex: 1;
       display: flex;
+      align-items: center;
       justify-content: center;
       width: 100%;
+      overflow: auto;
+    }
+    &-inner {
     }
   }
   &__editor {

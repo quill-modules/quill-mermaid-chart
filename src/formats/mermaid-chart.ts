@@ -21,8 +21,11 @@ export class MermaidChartFormat extends BlockEmbed {
     node.dataset.id = id;
     const chart = document.createElement('div');
     chart.classList.add(bem.be('chart-box'));
+    const chartInner = document.createElement('div');
+    chartInner.classList.add(bem.be('chart-inner'));
+    chart.appendChild(chartInner);
     node.appendChild(chart);
-    renderMermaidInNode(chart, id, value, chart);
+    renderMermaidInNode(chart, id, value, chartInner);
     return node;
   }
 
@@ -46,13 +49,17 @@ export class MermaidChartFormat extends BlockEmbed {
     return this.domNode.querySelector(`:scope > .${bem.be('chart-box')}`) as HTMLElement;
   }
 
+  getChartInner() {
+    return this.domNode.querySelector(`:scope .${bem.be('chart-inner')}`) as HTMLElement;
+  }
+
   getEditor() {
     return this.domNode.querySelector(`:scope > .${bem.be('editor')}`) as HTMLElement;
   }
 
   private bindInputEvent(textInput: HistroyInput) {
-    const renderPreview = debounce(() => {
-      this.updatePreview(textInput.el.value);
+    const renderPreview = debounce(async () => {
+      await this.updatePreview(textInput.el.value);
       this.calculateHeight();
       // TODO: quill internal change selection range?
       textInput.el.blur();
@@ -116,8 +123,8 @@ export class MermaidChartFormat extends BlockEmbed {
 
   calculateHeight() {
     if (!this.textInput) return;
-    const chart = this.getChart();
-    const chartHeight = chart.getBoundingClientRect().height;
+    const chartInner = this.getChartInner();
+    const chartHeight = chartInner.getBoundingClientRect().height;
     const { height } = calcTextareaHeight(this.textInput.el);
     let resHeight = Number.parseFloat(height);
     if (chartHeight < resHeight) {
@@ -132,9 +139,12 @@ export class MermaidChartFormat extends BlockEmbed {
   }
 
   updatePreview(value: string) {
-    this.domNode[mermaidDataKey] = value;
     const chart = this.getChart();
-    return renderMermaidInNode(chart, this.id, value, chart);
+    const chartInner = this.getChartInner();
+
+    if (!chart || !chartInner) return;
+    this.domNode[mermaidDataKey] = value;
+    return renderMermaidInNode(chart, this.id, value, chartInner);
   }
 
   removeEditor() {

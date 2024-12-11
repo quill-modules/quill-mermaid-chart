@@ -49,7 +49,6 @@ export async function renderMermaidChart(id: string, value: string, chart: HTMLE
       const base64 = svgStringToBase64(result.svg);
       const img = new Image();
       img.src = base64;
-      chart.innerHTML = '';
       chart.appendChild(img);
     }
   }
