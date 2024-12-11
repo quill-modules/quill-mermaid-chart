@@ -16,9 +16,9 @@ $border-radius: 8px;
     }
   }
   &__select {
-    @include setCssVar(text-color, #171717);
+    @include setCssVar(text-color, rgba(0, 0, 0, 0.88));
     @include setCssVar(border-color, #bae6fd);
-    @include setCssVar(bg-color, #f4f4f5);
+    @include setCssVar(bg-color, #ffffff);
     @include setCssVar(tip-bg-color, #424242);
     @include setCssVar(tip-text-color, #ffffff);
 
@@ -40,11 +40,13 @@ $border-radius: 8px;
       color: getCssVar(text-color);
       font-size: 20px;
       cursor: pointer;
-      transition-duration: 0.3s;
-      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.11);
+      transition-duration: 0.15s;
+      box-shadow:
+        0 6px 16px 0 rgba(0, 0, 0, 0.08),
+        0 3px 6px -4px rgba(0, 0, 0, 0.12),
+        0 9px 28px 8px rgba(0, 0, 0, 0.05);
       &:hover {
-        @include setCssVar(text-color, #fafafa);
-        @include setCssVar(bg-color, #38bdf8);
+        @include setCssVar(bg-color, rgba(240, 240, 240));
         &::after {
           display: flex;
         }
@@ -84,7 +86,7 @@ $border-radius: 8px;
     &-header {
       display: inline-flex;
       height: 24px;
-      transform: translateY(-12px);
+      transform: translateY(-100%);
     }
     &-template {
       width: 144px;
@@ -123,15 +125,17 @@ $border-radius: 8px;
     overflow: auto;
     &-box {
       position: relative;
-      flex-shrink: 0;
       flex: 1;
       display: flex;
       align-items: center;
-      justify-content: center;
       width: 100%;
+      padding: 12px 24px;
       overflow: auto;
     }
     &-inner {
+      flex-shrink: 0;
+      max-height: 100%;
+      margin: auto;
     }
   }
   &__editor {
@@ -141,7 +145,7 @@ $border-radius: 8px;
       box-sizing: border-box;
       display: block;
       width: 100%;
-      max-height: 100%;
+      height: 100%;
       margin: 0;
       padding: 16px;
       outline: none;

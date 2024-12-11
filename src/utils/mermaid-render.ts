@@ -7,6 +7,9 @@ export function renderMermaidInNode(node: HTMLElement, id: string, value: string
   return new Promise<void>(async (resolve) => {
     await renderMermaidChart(id, value, chart, options);
     close();
+    if (node.scrollWidth > node.offsetWidth) {
+      node.scrollLeft = (node.scrollWidth - node.offsetWidth) / 2;
+    }
     resolve();
   });
 }
@@ -46,9 +49,27 @@ export async function renderMermaidChart(id: string, value: string, chart: HTMLE
       result = await window.mermaid.render(`chart-${id}`, value, chart);
     }
     if (result) {
-      const base64 = svgStringToBase64(result.svg);
+      const { url, width, height } = svgStringToBase64(result.svg);
       const img = new Image();
-      img.src = base64;
+      img.src = url;
+      if (width > 800 && height > 800) {
+        Object.assign(chart.style, {
+          width: `800px`,
+          height: `800px`,
+        });
+      }
+      else if (width > height) {
+        Object.assign(chart.style, {
+          width: `${width}px`,
+          height: null,
+        });
+      }
+      else {
+        Object.assign(chart.style, {
+          height: `${height}px`,
+          width: null,
+        });
+      }
       chart.appendChild(img);
     }
   }

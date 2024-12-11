@@ -1,7 +1,7 @@
 import type { EditorInputElement } from '@/modules/history-input';
 import type { BlockEmbed as TypeBlockEmbed } from 'quill/blots/block';
 import { HistroyInput } from '@/modules/history-input';
-import { bem, calcTextareaHeight, chartTemplate, debounce, mermaidDataKey, randomId, renderMermaidInNode, SHORTKEY } from '@/utils';
+import { bem, chartTemplate, debounce, mermaidDataKey, randomId, renderMermaidInNode, SHORTKEY } from '@/utils';
 import Quill from 'quill';
 
 const BlockEmbed = Quill.import('blots/block/embed') as typeof TypeBlockEmbed;
@@ -60,7 +60,6 @@ export class MermaidChartFormat extends BlockEmbed {
   private bindInputEvent(textInput: HistroyInput) {
     const renderPreview = debounce(async () => {
       await this.updatePreview(textInput.el.value);
-      this.calculateHeight();
       // TODO: quill internal change selection range?
       textInput.el.blur();
       setTimeout(() => textInput.el.focus());
@@ -117,25 +116,7 @@ export class MermaidChartFormat extends BlockEmbed {
     });
 
     this.domNode.insertBefore(editor, this.domNode.firstChild);
-    this.calculateHeight();
     this.mode = 'edit';
-  }
-
-  calculateHeight() {
-    if (!this.textInput) return;
-    const chartInner = this.getChartInner();
-    const chartHeight = chartInner.getBoundingClientRect().height;
-    const { height } = calcTextareaHeight(this.textInput.el);
-    let resHeight = Number.parseFloat(height);
-    if (chartHeight < resHeight) {
-      if (resHeight > 500) {
-        resHeight = 500;
-      }
-    }
-    else {
-      resHeight = chartHeight;
-    }
-    this.textInput.el.style.minHeight = `${resHeight}px`;
   }
 
   updatePreview(value: string) {
