@@ -1,7 +1,7 @@
-import type { MermaidChartFormat, MermaidChartMode } from '@/formats';
+import type { MermaidChartFormat } from '@/formats';
 import type Quill from 'quill';
 import type { HistroyInputOptions } from './history-input';
-import { addScrollEvent, bem, chartTemplate, clearScrollEvent, events } from '@/utils';
+import { addScrollEvent, bem, chartTemplate, clearScrollEvent } from '@/utils';
 import closeSvg from '../svg/close.svg';
 import editSvg from '../svg/edit.svg';
 
@@ -143,11 +143,6 @@ export class MermaidSelector {
         this.destroy();
       },
     });
-    this.quill.on(events.mermaidModeChange, (mode: MermaidChartMode) => {
-      if (this.selector) {
-        this.selector.classList.add(mode);
-      }
-    });
 
     this.selector.appendChild(removeBtn);
     this.selector.appendChild(editBtn);
@@ -160,7 +155,6 @@ export class MermaidSelector {
   }
 
   destroy() {
-    this.quill.off(events.mermaidModeChange);
     clearScrollEvent.call(this);
     if (this.resizeOb) {
       this.resizeOb.disconnect();

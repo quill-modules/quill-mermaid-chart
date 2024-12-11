@@ -1,7 +1,3 @@
-export const events = {
-  mermaidModeChange: 'mermaid-mode-change',
-  mermaidTextChange: 'mermaid-text-change',
-};
 export const mermaidDataKey = Symbol('mermaid-data');
 export const chartTemplate = {
   'Flowchart': `flowchart TD
