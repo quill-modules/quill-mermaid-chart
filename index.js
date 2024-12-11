@@ -25,15 +25,17 @@ const quill = new Quill('#editor', {
       ['mermaid-chart'],
     ],
     mermaid: {
-      // editor: {
-      //   dialogMaskClickClose: false,
-      //   onClose() {
-      //     console.log('close', this);
-      //   },
-      // },
-      // histroyStackOptions: {
-      //   maxStack: 10,
-      // },
+      selectorOptions: {
+        onRemove(blot) {
+          console.log(blot);
+        },
+        onEdit(blot, enter) {
+          console.log(blot, enter);
+        },
+        onDestroy() {
+          console.log('selector Destroy');
+        },
+      },
     },
   },
 });
