@@ -4,7 +4,7 @@ A Quill.js module to add Mermaid support. Help you to write flowcharts, sequence
 
 If you are familiar with Markdown you should have no problem learning [Mermaid's Syntax](https://mermaid.js.org/intro/syntax-reference.html).
 
-[Demo](https://zzxming.github.io/quill-mermaid-chart/)
+[Demo](https://quill-modules.github.io/quill-mermaid-chart/)
 
 ## Usage
 
