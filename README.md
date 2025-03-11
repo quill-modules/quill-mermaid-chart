@@ -48,6 +48,6 @@ const quill = new Quill('#editor', {
 | selectorOptions.onDestroy    | trigger when selector destroy                                                                     | `() => void`                            | -       |
 | selectorOptions.onRemove     | trigger when selector click remove button. if it returns `true`, the chart it will not be removed | `(blot: MermaidChartFormat) => boolean` | -       |
 | selectorOptions.onEdit       | trigger when selector click edit button                                                           | `() => void`                            | -       |
+| selectorOptions.template     | custom the chart template                                                                         | `Record<string, string>`                | -       |
 | histroyStackOptions.maxStack | max record mermaid editor history                                                                 | `number`                                | `100`   |
 | histroyStackOptions.delay    | record input value the time interval each time(ms)                                                | `number`                                | `1000`  |
-| histroyStackOptions.template | custom the chart template                                                                         | `Record<string, string>`                | -       |
