@@ -50,3 +50,4 @@ const quill = new Quill('#editor', {
 | selectorOptions.onEdit       | trigger when selector click edit button                                                           | `() => void`                            | -       |
 | histroyStackOptions.maxStack | max record mermaid editor history                                                                 | `number`                                | `100`   |
 | histroyStackOptions.delay    | record input value the time interval each time(ms)                                                | `number`                                | `1000`  |
+| histroyStackOptions.template | custom the chart template                                                                         | `Record<string, string>`                | -       |

@@ -9,6 +9,7 @@ export interface MermaidSelectorOptions {
   onDestroy: () => void;
   onRemove: (blot: MermaidChartFormat) => Promise<boolean> | boolean;
   onEdit: (blot: MermaidChartFormat, isEnter: boolean) => void;
+  template: Record<string, string>;
 }
 export class MermaidSelector {
   #internalDestroy: boolean = false;
@@ -31,6 +32,7 @@ export class MermaidSelector {
       onDestroy: () => {},
       onRemove: () => false,
       onEdit: () => {},
+      template: chartTemplate,
     }, options);
   }
 
@@ -99,7 +101,7 @@ export class MermaidSelector {
     option.setAttribute('selected', 'true');
     template.appendChild(option);
     template.setAttribute('placeholder', 'Template');
-    for (const [key, value] of Object.entries(chartTemplate)) {
+    for (const [key, value] of Object.entries(this.options.template)) {
       const option = document.createElement('option');
       option.value = value;
       option.textContent = key;
