@@ -47,18 +47,29 @@ const buildTs = async (isDev: boolean = false) => {
     treeshake: true,
     plugins,
   });
-  if (isDev) {
+  if (!isDev) {
     await bundle.write({
-      file: resolve(demoBundle, 'dev.js'),
+      file: resolve(distBundle, 'index.umd.js'),
       sourcemap: true,
       format: 'umd',
-      name: 'bundle',
+      name: 'QuillMermaid',
+      exports: 'named',
       globals: {
         quill: 'Quill',
       },
-      exports: 'named',
     });
   }
+
+  await bundle.write({
+    file: resolve(demoBundle, 'index.umd.js'),
+    sourcemap: true,
+    format: 'umd',
+    name: 'QuillMermaid',
+    globals: {
+      quill: 'Quill',
+    },
+    exports: 'named',
+  });
   return bundle.write({
     file: resolve(distBundle, 'index.js'),
     sourcemap: true,
