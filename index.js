@@ -1,8 +1,9 @@
 const Quill = window.Quill;
 const mermaid = window.mermaid;
+const { QuillMermaid } = window.QuillMermaid;
 
 Quill.register({
-  'modules/mermaid': bundle.QuillMermaid,
+  'modules/mermaid': QuillMermaid,
 }, true);
 
 const quill = new Quill('#editor', {
